@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile - StreetSaver</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .profile-card {
+            max-width: 400px;
+            width: 100%;
+            background: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.15);
+            animation: fadeInUp 0.6s ease;
+        }
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .btn-custom {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #fff;
+            transition: 0.3s;
+        }
+        .btn-custom:hover {
+            opacity: 0.85;
+        }
+        .btn-success {
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .btn-outline-danger {
+            border-radius: 10px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+
+
+<div class="profile-card mx-auto text-center shadow-lg" style="max-width: 420px; background: #fff; border-radius: 20px; padding: 36px 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.18);">
+    <div class="mb-4 position-relative">
+        {% if profile_pic %}
+            <img src="{{ url_for('static', filename='uploads/' ~ profile_pic) }}" alt="Profile Picture" class="rounded-circle border border-4 border-white shadow" style="width: 120px; height: 120px; object-fit: cover; background: #e9ecef;">
+        {% else %}
+            <img src="https://avatars.dicebear.com/api/initials/{{ username }}.svg" alt="Default Avatar" class="rounded-circle border border-4 border-white shadow" style="width: 120px; height: 120px; background: #e9ecef;">
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('update_profile_pic') }}" class="mt-2">
+            <label class="btn btn-sm btn-light shadow position-absolute" style="bottom: 0; left: 50%; transform: translateX(-50%);">
+                <i class="bi bi-camera-fill"></i>
+                <input type="file" name="profile_pic" accept="image/*" style="display:none;" onchange="this.form.submit()">
+            </label>
+        </form>
+    </div>
+    <h2 class="fw-bold mb-1 text-dark" style="letter-spacing:1px;">{{ full_name if full_name else username }}</h2>
+    <p class="text-secondary mb-2" style="font-size:1.1rem;">@{{ username }}</p>
+    <div class="mb-3">
+        <span class="badge bg-info bg-gradient px-3 py-2 text-white shadow-sm" style="font-size:1rem;">{{ place if place else 'No place set' }}</span>
+    </div>
+    <div class="mb-3">
+        <span class="d-block mb-2 text-dark"><i class="bi bi-telephone-fill text-primary"></i> <strong>Contact:</strong> <span class="text-secondary">{{ contact if contact else 'N/A' }}</span></span>
+    </div>
+    <hr>
+    <div class="d-grid gap-2">
+        <a href="{{ url_for('index') }}" class="btn btn-custom mb-2 fw-semibold shadow-sm">Go to Home</a>
+        <a href="{{ url_for('submit') }}" class="btn btn-custom mb-2 fw-semibold shadow-sm">Submit New Report</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger fw-semibold shadow-sm">Logout</a>
+    </div>
+</div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
