@@ -146,12 +146,12 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Dashboard Sidebar -->
-        <div class="col-md-3 d-none d-md-block pt-5" style="background:#fff; min-height:100vh; box-shadow:0 2px 12px rgba(0,0,0,0.07);">
+        <div class="col-md-3 d-none d-md-block pt-5" style="background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%); min-height:100vh; box-shadow:0 4px 24px rgba(76,172,254,0.10); border-radius: 18px 0 0 18px; border-right: 1px solid #e3e3e3;">
             <div class="sticky-top" style="top:80px;">
-                <h4 class="fw-bold mb-4 mt-3 text-primary">Dashboard</h4>
+                <h4 class="fw-bold mb-4 mt-3 text-primary" style="font-family: 'Segoe UI', sans-serif; letter-spacing: 1px;">Dashboard</h4>
                 <div class="d-grid gap-3">
                     <div class="dropdown">
-                        <button class="btn btn-outline-primary dropdown-toggle w-100" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-gradient-primary dropdown-toggle w-100" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 8px; font-weight: 500;">
                             <i class="bi bi-tags"></i> Sort by Category
                         </button>
                         <ul class="dropdown-menu w-100" aria-labelledby="categoryDropdown">
@@ -162,7 +162,7 @@
                         </ul>
                     </div>
                     <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="dateDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-gradient-secondary dropdown-toggle w-100" type="button" id="dateDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 8px; font-weight: 500;">
                             <i class="bi bi-calendar-date"></i> Sort by Date
                         </button>
                         <ul class="dropdown-menu w-100" aria-labelledby="dateDropdown">
@@ -170,8 +170,8 @@
                             <li><a class="dropdown-item" href="#" onclick="sortByDate('old')">Old</a></li>
                         </ul>
                     </div>
-                    <button class="btn btn-outline-info" onclick="sortReports('location')"><i class="bi bi-geo-alt"></i> Sort by Location</button>
-                    <button class="btn btn-outline-dark" onclick="resetSort()"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+                    <button class="btn btn-gradient-info" onclick="sortReports('location')" style="border-radius: 8px; font-weight: 500;"><i class="bi bi-geo-alt"></i> Sort by Location</button>
+                    <button class="btn btn-gradient-dark" onclick="resetSort()" style="border-radius: 8px; font-weight: 500;"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
                 </div>
             </div>
         </div>
