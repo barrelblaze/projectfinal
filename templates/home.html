@@ -127,6 +127,35 @@
             transform: translateY(-1px);
             box-shadow: 0 3px 6px rgba(0,0,0,0.15);
         }
+        /* Dashboard Sidebar - match login/register theme */
+        .dashboard-card {
+            background: #fff;
+            border-radius: 15px 0 0 15px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.12);
+            padding: 32px 24px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+        .dashboard-title {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4facfe;
+            margin-bottom: 28px;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        .btn-custom {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #fff;
+            transition: 0.3s;
+        }
+        .btn-custom:hover {
+            opacity: 0.85;
+        }
     </style>
 </head>
 <body>
@@ -146,12 +175,12 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Dashboard Sidebar -->
-        <div class="col-md-3 d-none d-md-block pt-5" style="background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%); min-height:100vh; box-shadow:0 4px 24px rgba(76,172,254,0.10); border-radius: 18px 0 0 18px; border-right: 1px solid #e3e3e3;">
-            <div class="sticky-top" style="top:80px;">
-                <h4 class="fw-bold mb-4 mt-3 text-primary" style="font-family: 'Segoe UI', sans-serif; letter-spacing: 1px;">Dashboard</h4>
+        <div class="col-md-3 d-none d-md-block" style="background: linear-gradient(135deg, #4facfe, #00f2fe); min-height:100vh;">
+            <div class="dashboard-card sticky-top">
+                <div class="dashboard-title">Dashboard</div>
                 <div class="d-grid gap-3">
                     <div class="dropdown">
-                        <button class="btn btn-gradient-primary dropdown-toggle w-100" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 8px; font-weight: 500;">
+                        <button class="btn btn-custom dropdown-toggle w-100" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-tags"></i> Sort by Category
                         </button>
                         <ul class="dropdown-menu w-100" aria-labelledby="categoryDropdown">
@@ -162,7 +191,7 @@
                         </ul>
                     </div>
                     <div class="dropdown">
-                        <button class="btn btn-gradient-secondary dropdown-toggle w-100" type="button" id="dateDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 8px; font-weight: 500;">
+                        <button class="btn btn-custom dropdown-toggle w-100" type="button" id="dateDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-calendar-date"></i> Sort by Date
                         </button>
                         <ul class="dropdown-menu w-100" aria-labelledby="dateDropdown">
@@ -170,13 +199,12 @@
                             <li><a class="dropdown-item" href="#" onclick="sortByDate('old')">Old</a></li>
                         </ul>
                     </div>
-                    <button class="btn btn-gradient-info" onclick="sortReports('location')" style="border-radius: 8px; font-weight: 500;"><i class="bi bi-geo-alt"></i> Sort by Location</button>
-                    <button class="btn btn-gradient-dark" onclick="resetSort()" style="border-radius: 8px; font-weight: 500;"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+                    <button class="btn btn-custom" onclick="resetSort()"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
                 </div>
             </div>
         </div>
         <!-- Main Content -->
-        <div class="col-md-9 col-12">
+        <div class="col-md-6 col-12">
             <div class="mt-5 pt-4">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
@@ -253,16 +281,34 @@
                     {% endif %}
                 </div>
             </div>
-
-            <!-- Bootstrap Modal for Image Preview -->
-            <div class="modal fade" id="imageModal" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content bg-dark position-relative border-0">
-                        <button type="button" class="modal-close-btn" data-bs-dismiss="modal">&times;</button>
-                        <div class="modal-body p-0">
-                            <img id="modalImage" src="" alt="Preview">
-                        </div>
-                    </div>
+        </div>
+        <!-- Profile Card Right Side -->
+        <div class="col-md-3 d-none d-md-block">
+            <div class="profile-card mx-auto text-center shadow-lg" style="max-width: 420px; background: #fff; border-radius: 20px; padding: 36px 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); margin-top: 100px;">
+                <div class="mb-4 position-relative">
+                    {% if profile_pic %}
+                        <img src="{{ url_for('static', filename='uploads/' ~ profile_pic) }}" alt="Profile Picture" class="rounded-circle border border-4 border-white shadow" style="width: 120px; height: 120px; object-fit: cover; background: #e9ecef;">
+                    {% else %}
+                        <img src="https://avatars.dicebear.com/api/initials/{{ username }}.svg" alt="Default Avatar" class="rounded-circle border border-4 border-white shadow" style="width: 120px; height: 120px; background: #e9ecef;">
+                    {% endif %}
+                    <form method="POST" enctype="multipart/form-data" action="{{ url_for('update_profile_pic') }}" class="mt-2">
+                        <label class="btn btn-sm btn-light shadow position-absolute" style="bottom: 0; left: 50%; transform: translateX(-50%);">
+                            <i class="bi bi-camera-fill"></i>
+                            <input type="file" name="profile_pic" accept="image/*" style="display:none;" onchange="this.form.submit()">
+                        </label>
+                    </form>
+                </div>
+                <h2 class="fw-bold mb-1 text-dark" style="letter-spacing:1px;">{{ full_name if full_name else username }}</h2>
+                <p class="text-secondary mb-2" style="font-size:1.1rem;">@{{ username }}</p>
+                <div class="mb-3">
+                    <span class="badge bg-info bg-gradient px-3 py-2 text-white shadow-sm" style="font-size:1rem;">{{ place if place else 'No place set' }}</span>
+                </div>
+                <div class="mb-3">
+                    <span class="d-block mb-2 text-dark"><i class="bi bi-telephone-fill text-primary"></i> <strong>Contact:</strong> <span class="text-secondary">{{ contact if contact else 'N/A' }}</span></span>
+                </div>
+                <hr>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger fw-semibold shadow-sm">Logout</a>
                 </div>
             </div>
         </div>

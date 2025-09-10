@@ -40,7 +40,16 @@ def index():
     if 'user_id' in session:
         all_reports = Report.query.order_by(Report.id.desc()).all()  # includes all reports
         my_reports = Report.query.filter_by(user_id=session['user_id']).order_by(Report.id.desc()).all()
-        return render_template('home.html', all_reports=all_reports, my_reports=my_reports, logged_in=True)
+        user = User.query.get(session['user_id'])
+        return render_template('home.html',
+            all_reports=all_reports,
+            my_reports=my_reports,
+            profile_pic=user.profile_pic if user else None,
+            full_name=user.full_name if user else None,
+            username=user.username if user else None,
+            place=user.place if user else None,
+            contact=user.contact if user else None
+        )
     return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
