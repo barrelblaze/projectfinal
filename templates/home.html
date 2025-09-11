@@ -283,6 +283,7 @@
             </div>
         </div>
         <!-- Profile Card Right Side -->
+        {% if logged_in %}
         <div class="col-md-3 d-none d-md-block">
             <div class="profile-card mx-auto text-center shadow-lg" style="max-width: 420px; background: #fff; border-radius: 20px; padding: 36px 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); margin-top: 100px;">
                 <div class="mb-4 position-relative">
@@ -312,6 +313,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 </div>
 
