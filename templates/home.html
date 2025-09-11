@@ -229,23 +229,29 @@
                     {% if all_reports %}
                         {% for report in all_reports %}
                             <div class="card report-card position-relative">
-                                <div class="profile-icon-wrapper" style="position:absolute; top:10px; left:10px; z-index:2;">
+                                <div class="profile-icon-wrapper" style="position:absolute; top:32px; left:10px; z-index:2;">
                                     {% set report_user = user_map[report.user_id] if report.user_id in user_map else None %}
                                     {% if report_user and report_user.profile_pic %}
-                                        <img src="{{ url_for('static', filename='uploads/' ~ report_user.profile_pic) }}" alt="User" class="rounded-circle border border-2 border-white shadow" style="width:44px; height:44px; object-fit:cover; background:#e9ecef;">
+                                        <img src="{{ url_for('static', filename='uploads/' ~ report_user.profile_pic) }}" alt="User" class="rounded-circle border border-2 border-white shadow" style="width:40px; height:40px; object-fit:cover; background:#e9ecef;">
                                     {% else %}
-                                        <img src="https://avatars.dicebear.com/api/initials/{{ report_user.username if report_user else 'U' }}.svg" alt="User" class="rounded-circle border border-2 border-white shadow" style="width:44px; height:44px; background:#e9ecef;">
+                                        <img src="https://avatars.dicebear.com/api/initials/{{ report_user.username if report_user else 'U' }}.svg" alt="User" class="rounded-circle border border-2 border-white shadow" style="width:40px; height:40px; background:#e9ecef;">
                                     {% endif %}
                                 </div>
-                                {% if report.image %}
-                                    <a href="#" class="img-preview-link" data-img="{{ url_for('static', filename='uploads/' ~ report.image) }}">
-                                        <img src="{{ url_for('static', filename='uploads/' ~ report.image) }}" class="img-preview" alt="Report Image" style="margin-left:70px;">
-                                    </a>
-                                {% else %}
-                                    <a href="#" class="img-preview-link" data-img="https://via.placeholder.com/400x250/000000/FFFFFF?text=No+Image">
-                                        <img src="https://via.placeholder.com/400x250/000000/FFFFFF?text=No+Image" class="img-preview" alt="No Image" style="margin-left:70px;">
-                                    </a>
-                                {% endif %}
+                                <div class="d-flex align-items-start">
+                                    {% if report.image %}
+                                        <a href="#" class="img-preview-link" data-img="{{ url_for('static', filename='uploads/' ~ report.image) }}">
+                                            <img src="{{ url_for('static', filename='uploads/' ~ report.image) }}" class="img-preview" alt="Report Image" style="margin-left:70px; width:250px; height:180px; object-fit:cover; object-position:center; border-radius:8px; display:block;">
+                                        </a>
+                                    {% else %}
+                                        <a href="#" class="img-preview-link" data-img="https://via.placeholder.com/400x250/000000/FFFFFF?text=No+Image">
+                                            <img src="https://via.placeholder.com/400x250/000000/FFFFFF?text=No+Image" class="img-preview" alt="No Image" style="margin-left:70px; width:250px; height:180px; object-fit:cover; object-position:center; border-radius:8px; display:block;">
+                                        </a>
+                                    {% endif %}
+                                    <div class="status-box ms-3 mt-4" style="min-width:120px;">
+                                        <div class="fw-semibold text-secondary mb-1" style="font-size:1rem;">Status</div>
+                                        <span class="badge bg-warning text-dark px-3 py-2" style="font-size:1rem;">{{ report.status if report.status else 'Pending' }}</span>
+                                    </div>
+                                </div>
                                 <div class="card-body card-body-custom">
                                     <h5 class="card-title">
                                         <span class="text-dark">Category:</span>
@@ -268,11 +274,21 @@
                     {% if my_reports %}
                         {% for report in my_reports %}
                             <div class="card report-card">
-                                {% if report.image %}
-                                    <img src="{{ url_for('static', filename='uploads/' ~ report.image) }}" class="img-preview" alt="Report Image">
-                                {% else %}
-                                    <img src="https://via.placeholder.com/400x250/000000/FFFFFF?text=No+Image" class="img-preview" alt="No Image">
-                                {% endif %}
+                                <div class="d-flex align-items-start">
+                                    {% if report.image %}
+                                        <a href="#" class="img-preview-link" data-img="{{ url_for('static', filename='uploads/' ~ report.image) }}">
+                                            <img src="{{ url_for('static', filename='uploads/' ~ report.image) }}" class="img-preview" alt="Report Image" style="width:250px; height:180px; object-fit:cover; object-position:center; border-radius:8px; display:block;">
+                                        </a>
+                                    {% else %}
+                                        <a href="#" class="img-preview-link" data-img="https://via.placeholder.com/400x250/000000/FFFFFF?text=No+Image">
+                                            <img src="https://via.placeholder.com/400x250/000000/FFFFFF?text=No+Image" class="img-preview" alt="No Image" style="width:250px; height:180px; object-fit:cover; object-position:center; border-radius:8px; display:block;">
+                                        </a>
+                                    {% endif %}
+                                    <div class="status-box ms-3 mt-4" style="min-width:120px;">
+                                        <div class="fw-semibold text-secondary mb-1" style="font-size:1rem;">Status</div>
+                                        <span class="badge bg-warning text-dark px-3 py-2" style="font-size:1rem;">{{ report.status if report.status else 'Pending' }}</span>
+                                    </div>
+                                </div>
                                 <div class="card-body card-body-custom">
                                     <h5 class="card-title">
                                         <span class="text-dark">Category:</span>
