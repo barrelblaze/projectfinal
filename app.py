@@ -41,6 +41,8 @@ def index():
         all_reports = Report.query.order_by(Report.id.desc()).all()
         my_reports = Report.query.filter_by(user_id=session['user_id']).order_by(Report.id.desc()).all()
         user = User.query.get(session['user_id'])
+        users = User.query.all()
+        user_map = {u.id: u for u in users}
         return render_template(
             'home.html',
             all_reports=all_reports,
@@ -50,7 +52,8 @@ def index():
             full_name=user.full_name or '',
             contact=user.contact or '',
             place=user.place or '',
-            profile_pic=user.profile_pic
+            profile_pic=user.profile_pic,
+            user_map=user_map
         )
     return redirect(url_for('login'))
 
