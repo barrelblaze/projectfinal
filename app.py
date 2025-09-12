@@ -57,11 +57,23 @@ def index():
         )
     return redirect(url_for('login'))
 
+ADMIN_USERNAME = "adminuser"
+ADMIN_PASSWORD = "adminpass"
+
+@app.route('/admin')
+def admin_module():
+    return render_template('admin.html', message="This is admin module")
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user = User.query.filter_by(username=request.form['username']).first()
-        if user and check_password_hash(user.password, request.form['password']):
+        username = request.form['username']
+        password = request.form['password']
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session['admin_logged_in'] = True
+            return redirect(url_for('admin_module'))
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
             flash("Login successful!", "success")
             return redirect(url_for('index'))
