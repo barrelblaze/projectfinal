@@ -49,14 +49,16 @@
 <body class="bg-light">
 
 <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm fixed-top">
+<nav class="navbar navbar-expand-lg shadow-sm fixed-top" style="background: linear-gradient(135deg, #4facfe, #00f2fe); border-bottom: 2px solid #4facfe;">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('index') }}">StreetSaver</a>
-        <div class="d-flex">
-            <a href="{{ url_for('index') }}" class="btn btn-outline-primary me-2">Home</a>
-            <a href="{{ url_for('submit') }}" class="btn btn-outline-light me-2">Submit Report</a>
-            <a href="{{ url_for('logout') }}" class="btn btn-outline-warning me-2">Logout</a>
-            <a href="{{ url_for('profile') }}" class="btn btn-outline-info">Profile</a>
+        <a class="navbar-brand fw-bold text-white" href="{{ url_for('index') }}" style="font-size:1.5rem; letter-spacing:1px; text-shadow:0 2px 8px rgba(0,0,0,0.12);">
+            <i class="bi bi-shield-check text-white me-2"></i>StreetSaver
+        </a>
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ url_for('index') }}" class="btn btn-primary fw-semibold shadow-sm me-2" style="border-radius:8px;">Home</a>
+            <a href="{{ url_for('submit') }}" class="btn btn-light fw-semibold shadow-sm me-2" style="border-radius:8px;">Submit Report</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-warning fw-semibold shadow-sm me-2" style="border-radius:8px;">Logout</a>
+            <a href="{{ url_for('profile') }}" class="btn btn-info fw-semibold shadow-sm" style="border-radius:8px;">Profile</a>
         </div>
     </div>
 </nav>
@@ -64,9 +66,13 @@
 <div class="profile-card mx-auto text-center shadow-lg" style="max-width: 420px; background: #fff; border-radius: 20px; padding: 36px 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); margin-top: 100px;">
     <div class="mb-4 position-relative">
         {% if profile_pic %}
-            <img src="{{ url_for('static', filename='uploads/' ~ profile_pic) }}" alt="Profile Picture" class="rounded-circle border border-4 border-white shadow" style="width: 120px; height: 120px; object-fit: cover; background: #e9ecef;">
+            <a href="#" id="profilePicPreviewLink">
+                <img src="{{ url_for('static', filename='uploads/' ~ profile_pic) }}" alt="Profile Picture" class="rounded-circle border border-4 border-white shadow" style="width: 120px; height: 120px; object-fit: cover; background: #e9ecef;">
+            </a>
         {% else %}
-            <img src="https://avatars.dicebear.com/api/initials/{{ username }}.svg" alt="Default Avatar" class="rounded-circle border border-4 border-white shadow" style="width: 120px; height: 120px; background: #e9ecef;">
+            <a href="#" id="profilePicPreviewLink">
+                <img src="https://avatars.dicebear.com/api/initials/{{ username }}.svg" alt="Default Avatar" class="rounded-circle border border-4 border-white shadow" style="width: 120px; height: 120px; background: #e9ecef;">
+            </a>
         {% endif %}
         <form method="POST" enctype="multipart/form-data" action="{{ url_for('update_profile_pic') }}" class="mt-2">
             <label class="btn btn-sm btn-light shadow position-absolute" style="bottom: 0; left: 50%; transform: translateX(-50%);">
@@ -81,15 +87,41 @@
         <span class="badge bg-info bg-gradient px-3 py-2 text-white shadow-sm" style="font-size:1rem;">{{ place if place else 'No place set' }}</span>
     </div>
     <div class="mb-3">
-        <span class="d-block mb-2 text-dark"><i class="bi bi-telephone-fill text-primary"></i> <strong>Contact:</strong> <span class="text-secondary">{{ contact if contact else 'N/A' }}</span></span>
+        <span class="d-block mb-2 text-dark"><strong>Contact:</strong> <span class="text-secondary">{{ contact if contact else 'N/A' }}</span></span>
     </div>
     <hr>
     <div class="d-grid gap-2">
         <a href="{{ url_for('logout') }}" class="btn btn-outline-danger fw-semibold shadow-sm">Logout</a>
     </div>
 </div>
+
+<!-- Modal for profile image preview -->
+<div class="modal fade" id="profileImageModal" tabindex="-1" aria-labelledby="profileImageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-transparent border-0">
+      <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+        <img id="profileModalImage" src="" alt="Profile Preview" class="rounded-circle border border-4 border-white shadow" style="width: 220px; height: 220px; object-fit: cover; background: #e9ecef;">
+      </div>
+    </div>
+  </div>
+</div>
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Profile image click-to-preview
+    const profilePicPreviewLink = document.getElementById('profilePicPreviewLink');
+    const profileImageModal = new bootstrap.Modal(document.getElementById('profileImageModal'));
+    const profileModalImage = document.getElementById('profileModalImage');
+    if (profilePicPreviewLink) {
+        profilePicPreviewLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            const img = profilePicPreviewLink.querySelector('img');
+            profileModalImage.src = img.src;
+            profileImageModal.show();
+        });
+    }
+</script>
 </body>
 </html>
