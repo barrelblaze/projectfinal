@@ -132,7 +132,7 @@
         <div class="row">
             <!-- Dashboard Sidebar -->
             <div class="col-md-3 d-none d-md-block" style="background: linear-gradient(135deg, #4facfe, #00f2fe); min-height:100vh;">
-                <div class="dashboard-card sticky-top">
+                <div class="dashboard-card sticky-top" style="top:90px;">
                     <div class="dashboard-title">Dashboard</div>
                     <div class="d-grid gap-3">
                         <div class="dropdown position-relative">
@@ -158,8 +158,8 @@
                         <button class="btn btn-custom" onclick="resetSort()"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
                     </div>
                 </div>
-                <!-- New white card for visibility below sort card -->
-                <div class="dashboard-card" style="background:#fff; margin-top:10px;">
+                <!-- New white card for visibility below sort card, now sticky -->
+                <div class="dashboard-card sticky-top" style="background:#fff; margin-top:10px; top:180px;">
                     <div class="dashboard-title" style="color:#4facfe;">User Management</div>
                     <div class="d-grid gap-2">
                         <a href="{{ url_for('view_all_users') }}" class="btn btn-outline-primary w-100" style="border-radius:10px; font-weight:600;">
