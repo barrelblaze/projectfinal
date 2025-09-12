@@ -192,6 +192,13 @@ def update_profile_pic():
         flash("No image selected.", "warning")
     return redirect(url_for('profile'))
 
+@app.route('/view_all_users')
+def view_all_users():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
+    users = User.query.all()
+    return render_template('admin.html', all_users=users, show_users=True)
+
 # ===================== DB INIT =====================
 
 with app.app_context():
