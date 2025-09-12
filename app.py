@@ -62,7 +62,12 @@ ADMIN_PASSWORD = "adminpass"
 
 @app.route('/admin')
 def admin_module():
-    return render_template('admin.html', message="This is admin module")
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
+    all_reports = Report.query.order_by(Report.id.desc()).all()
+    users = User.query.all()
+    user_map = {u.id: u for u in users}
+    return render_template('admin.html', message="This is admin module", all_reports=all_reports, user_map=user_map)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -136,6 +141,14 @@ def submit():
 
 @app.route('/delete/<int:id>', methods=['POST'])
 def delete(id):
+    # Admin delete logic
+    if request.form.get('admin') == '1':
+        report = Report.query.get_or_404(id)
+        db.session.delete(report)
+        db.session.commit()
+        flash("Report deleted by admin.", "info")
+        return redirect(url_for('admin_module'))
+    # User delete logic
     if 'user_id' not in session:
         return redirect(url_for('login'))
 

@@ -180,14 +180,14 @@
             <div class="dashboard-card sticky-top">
                 <div class="dashboard-title">Dashboard</div>
                 <div class="d-grid gap-3">
-                    <div class="dropdown">
-                        <button class="btn btn-custom dropdown-toggle w-100" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="dropdown position-relative">
+                        <button class="btn btn-custom dropdown-toggle w-100" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                             <i class="bi bi-tags"></i> Sort by Category
                         </button>
-                        <ul class="dropdown-menu w-100" aria-labelledby="categoryDropdown">
+                        <ul class="dropdown-menu w-100" aria-labelledby="categoryDropdown" style="z-index:1051;">
                             <li><a class="dropdown-item" href="#" onclick="filterByCategory('all')">All</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="filterByCategory('animal')">Animal</a></li>
                             <li><a class="dropdown-item" href="#" onclick="filterByCategory('person')">Person</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="filterByCategory('animal')">Animal</a></li>
                             <li><a class="dropdown-item" href="#" onclick="filterByCategory('other')">Other</a></li>
                         </ul>
                     </div>
