@@ -161,15 +161,14 @@
 <body>
 
 <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg shadow-sm fixed-top" style="background: linear-gradient(135deg, #4facfe, #00f2fe); border-bottom: 2px solid #4facfe;">
+<nav class="navbar navbar-expand-lg shadow-sm fixed-top" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold text-white" href="{{ url_for('index') }}" style="font-size:1.5rem; letter-spacing:1px; text-shadow:0 2px 8px rgba(0,0,0,0.12);">
-            <i class="bi bi-shield-check text-white me-2"></i>StreetSaver
+            StreetSaver
         </a>
         <div class="d-flex align-items-center gap-2">
-            <a href="{{ url_for('submit') }}" class="btn btn-light fw-semibold shadow-sm me-2" style="border-radius:8px;">Submit Report</a>
-            <a href="{{ url_for('logout') }}" class="btn btn-warning fw-semibold shadow-sm me-2" style="border-radius:8px;">Logout</a>
-            <a href="{{ url_for('profile') }}" class="btn btn-info fw-semibold shadow-sm" style="border-radius:8px;">Profile</a>
+            <a href="{{ url_for('submit') }}" class="btn btn-outline-light fw-semibold shadow-sm me-2" style="border-radius:8px;">Submit Report</a>
+            <a href="{{ url_for('profile') }}" class="btn btn-outline-info fw-semibold shadow-sm" style="border-radius:8px;">Profile</a>
         </div>
     </div>
 </nav>
@@ -231,12 +230,12 @@
                     {% if all_reports %}
                         {% for report in all_reports %}
                             <div class="card report-card position-relative">
-                                <div class="profile-icon-wrapper" style="position:absolute; top:10px; left:10px; z-index:2;">
+                                <div class="profile-icon-wrapper" style="position:absolute; top:30px; left:10px; z-index:2;">
                                     {% set report_user = user_map[report.user_id] if report.user_id in user_map else None %}
                                     {% if report_user and report_user.profile_pic %}
-                                        <img src="{{ url_for('static', filename='uploads/' ~ report_user.profile_pic) }}" alt="User" class="rounded-circle border border-2 border-white shadow" style="width:44px; height:44px; object-fit:cover; background:#e9ecef;">
+                                        <img src="{{ url_for('static', filename='uploads/' ~ report_user.profile_pic) }}" alt="User" class="rounded-circle border border-2 border-white shadow" style="width:36px; height:36px; object-fit:cover; background:#e9ecef;">
                                     {% else %}
-                                        <img src="https://avatars.dicebear.com/api/initials/{{ report_user.username if report_user else 'U' }}.svg" alt="User" class="rounded-circle border border-2 border-white shadow" style="width:44px; height:44px; background:#e9ecef;">
+                                        <img src="https://avatars.dicebear.com/api/initials/{{ report_user.username if report_user else 'U' }}.svg" alt="User" class="rounded-circle border border-2 border-white shadow" style="width:36px; height:36px; background:#e9ecef;">
                                     {% endif %}
                                 </div>
                                 <div class="d-flex align-items-start">
@@ -314,7 +313,7 @@
         </div>
         <!-- Profile Card Right Side -->
         {% if logged_in %}
-        <div class="col-md-3 d-none d-md-block">
+        <div class="col-md-3 d-none d-md-block" style="margin-left:-40px;">
             <div class="profile-card mx-auto text-center shadow-lg" style="max-width: 420px; background: #fff; border-radius: 20px; padding: 36px 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); margin-top: 100px;">
                 <div class="mb-4 position-relative">
                     {% if profile_pic %}
