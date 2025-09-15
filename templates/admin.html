@@ -132,8 +132,8 @@
         <div class="row">
             <!-- Dashboard Sidebar -->
             <div class="col-md-3 d-none d-md-block" style="background: linear-gradient(135deg, #4facfe, #00f2fe); min-height:100vh;">
-                <div class="dashboard-card sticky-top">
-                    <div class="dashboard-title">Dashboard</div>
+                <div class="dashboard-card" style="position:fixed; top:90px; left:0; width:23%; z-index:1050; margin-left:15px;">
+                    <div class="dashboard-title text-center fw-bold mb-3" style="font-size:2rem; color:#4facfe; letter-spacing:1px;">Dashboard</div>
                     <div class="d-grid gap-3">
                         <div class="dropdown position-relative">
                             <button class="btn btn-custom dropdown-toggle w-100" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
@@ -159,11 +159,17 @@
                     </div>
                 </div>
                 <!-- User Management card: fixed in sidebar, just below sort card -->
-                <div class="dashboard-card" style="background:#fff; position:fixed; left:0; top:290px; width:23%; z-index:1040; margin-left:15px;">
+                <div class="dashboard-card" style="background:#fff; position:fixed; left:0; top:410px; width:23%; z-index:1040; margin-left:15px;">
                     <div class="dashboard-title" style="color:#4facfe;">User Management</div>
                     <div class="d-grid gap-2">
                         <a href="{{ url_for('view_all_users') }}" class="btn btn-outline-primary w-100" style="border-radius:10px; font-weight:600;">
                             <i class="bi bi-people"></i> View All Users
+                        </a>
+                        <a href="#" class="btn btn-outline-primary w-100 mt-2" style="border-radius:10px; font-weight:600;">
+                            <i class="bi bi-building"></i> View All Organizations
+                        </a>
+                        <a href="#" class="btn btn-outline-primary w-100 mt-2" style="border-radius:10px; font-weight:600;">
+                            <i class="bi bi-shield-check"></i> Verify logins
                         </a>
                         <!-- You can add more user management actions here -->
                     </div>
@@ -172,41 +178,91 @@
             <!-- Main Content -->
             <div class="col-md-9 col-12" style="background:#fff; min-height:100vh;">
                 <div class="mt-4">
-                    {% if show_users %}
-                    <div class="mt-4" style="margin-top:90px;">
-                        <div class="row align-items-center mb-4">
-                            <div class="col-auto">
-                                <a href="{{ url_for('admin_module') }}" class="btn btn-outline-secondary" style="border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-top:32px;">
-                                    <i class="bi bi-arrow-left"></i>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <h4 class="mb-0 text-center" style="color:#4facfe; font-weight:600;">All Users</h4>
+                    <h2 class="fw-bold text-center mb-4" style="color:#4facfe; letter-spacing:1px;">Dashboard</h2>
+                    {% if show_admin_user_profile and admin_user %}
+                    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height:70vh; position:relative; margin-top:90px;">
+                        <a href="{{ url_for('view_all_users') }}" class="btn btn-outline-secondary" style="border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; position:absolute; left:0; top:0; margin-top:60px; margin-left:30px; z-index:2;">
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+                        <div class="card shadow" style="border-radius:20px; max-width:400px; width:100%; margin-top:40px;">
+                            <div class="card-body text-center">
+                                {% if admin_user.profile_pic %}
+                                    <img src="{{ url_for('static', filename='uploads/' ~ admin_user.profile_pic) }}" alt="Profile" class="rounded-circle mb-3" style="width:100px; height:100px; object-fit:cover; border:4px solid #4facfe;">
+                                {% else %}
+                                    <img src="https://avatars.dicebear.com/api/initials/{{ admin_user.username }}.svg" alt="Profile" class="rounded-circle mb-3" style="width:100px; height:100px; border:4px solid #4facfe;">
+                                {% endif %}
+                                <h4 class="mb-2" style="color:#4facfe; font-weight:700;">{{ admin_user.full_name or admin_user.username }}</h4>
+                                <p class="mb-1"><strong>Username:</strong> {{ admin_user.username }}</p>
+                                <p class="mb-1"><strong>Contact:</strong> {{ admin_user.contact }}</p>
+                                <p class="mb-1"><strong>Place:</strong> {{ admin_user.place }}</p>
+                                <form id="removeUserForm" action="{{ url_for('admin_delete_user', user_id=admin_user.id) }}" method="POST" class="mt-3">
+                                    <button type="submit" class="btn btn-remove-report" id="removeUserBtn" style="width:70%;">Remove User</button>
+                                </form>
                             </div>
                         </div>
-                        <div class="row justify-content-center">
-                            {% for user in all_users %}
-                            <div class="col-md-6 col-lg-4 mb-4">
-                                <div class="card shadow-sm" style="border-radius:15px;">
-                                    <div class="card-body text-center">
-                                        {% if user.profile_pic %}
-                                            <img src="{{ url_for('static', filename='uploads/' ~ user.profile_pic) }}" alt="Profile" class="rounded-circle mb-3" style="width:70px; height:70px; object-fit:cover; border:3px solid #4facfe;">
+                        {% if user_reports %}
+                        <div class="container mt-4">
+                            <h5 class="text-center mb-3" style="color:#4facfe; font-weight:600;">Submitted Reports</h5>
+                            <div class="row justify-content-center g-3">
+                                {% for report in user_reports %}
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                    <div class="card report-card shadow-sm" style="border-radius:12px; min-width:180px; max-width:220px; margin:auto;">
+                                        {% if report.image %}
+                                            <img src="{{ url_for('static', filename='uploads/' ~ report.image) }}" class="card-img-top" alt="Report Image" style="height:90px; object-fit:cover; border-top-left-radius:12px; border-top-right-radius:12px;">
                                         {% else %}
-                                            <img src="https://avatars.dicebear.com/api/initials/{{ user.username }}.svg" alt="Profile" class="rounded-circle mb-3" style="width:70px; height:70px; border:3px solid #4facfe;">
+                                            <img src="https://via.placeholder.com/220x90/000000/FFFFFF?text=No+Image" class="card-img-top" alt="No Image" style="height:90px; object-fit:cover; border-top-left-radius:12px; border-top-right-radius:12px;">
                                         {% endif %}
-                                        <h5 class="card-title mb-1">{{ user.full_name or user.username }}</h5>
-                                        <p class="card-text mb-1"><strong>Username:</strong> {{ user.username }}</p>
-                                        <p class="card-text mb-1"><strong>Contact:</strong> {{ user.contact }}</p>
-                                        <p class="card-text mb-1"><strong>Place:</strong> {{ user.place }}</p>
+                                        <div class="card-body p-2">
+                                            <div class="mb-1"><span class="badge bg-primary">{{ report.category }}</span></div>
+                                            <div class="small text-muted mb-1">{{ report.date }}</div>
+                                            <div class="mb-1" style="font-size:0.95em;">{{ report.description|truncate(40) }}</div>
+                                            <form action="{{ url_for('delete', id=report.id) }}" method="POST" class="mt-2 delete-form">
+                                                <input type="hidden" name="admin" value="1">
+                                                <button type="submit" class="btn btn-remove-report btn-sm w-100">Remove Report</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="text-center text-muted mt-4">No reports submitted by this user.</p>
+                        {% endif %}
+                    </div>
+                    {% elif show_users %}
+                    <div class="d-flex flex-column justify-content-center align-items-center" style="min-height:80vh;">
+                        <div class="position-relative mb-4 w-100" style="max-width:900px; margin-top:-150px;">
+                            <a href="{{ url_for('admin_module') }}" class="btn btn-outline-secondary" style="border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; position:absolute; left:-70px; top:50%; transform:translateY(-50%);">
+                                <i class="bi bi-arrow-left"></i>
+                            </a>
+                            <h4 class="mb-0 text-center" style="color:#4facfe; font-weight:600;">All Users</h4>
+                        </div>
+                        <div class="row justify-content-center w-100" style="max-width:900px;">
+                            {% for user in all_users %}
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <a href="{{ url_for('admin_user_profile', user_id=user.id) }}" style="text-decoration:none; color:inherit;">
+                                    <div class="card shadow-sm" style="border-radius:15px; cursor:pointer; transition:box-shadow 0.2s;">
+                                        <div class="card-body text-center">
+                                            {% if user.profile_pic %}
+                                                <img src="{{ url_for('static', filename='uploads/' ~ user.profile_pic) }}" alt="Profile" class="rounded-circle mb-3" style="width:70px; height:70px; object-fit:cover; border:3px solid #4facfe;">
+                                            {% else %}
+                                                <img src="https://avatars.dicebear.com/api/initials/{{ user.username }}.svg" alt="Profile" class="rounded-circle mb-3" style="width:70px; height:70px; border:3px solid #4facfe;">
+                                            {% endif %}
+                                            <h5 class="card-title mb-1">{{ user.full_name or user.username }}</h5>
+                                            <p class="card-text mb-1"><strong>Username:</strong> {{ user.username }}</p>
+                                            <p class="card-text mb-1"><strong>Contact:</strong> {{ user.contact }}</p>
+                                            <p class="card-text mb-1"><strong>Place:</strong> {{ user.place }}</p>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                             {% endfor %}
                         </div>
                     </div>
                     {% else %}
-                    <h4 class="mb-3 text-center">All Reports</h4>
-                    <div id="allReports" class="report-section active">
+                    <h4 class="mb-3 text-center" style="margin-top:90px;">All Reports</h4>
+                    <div id="allReports" class="report-section active" style="margin-top:20px;">
                         {% if all_reports %}
                             {% for report in all_reports %}
                                 <div class="card report-card position-relative mb-4">
@@ -228,7 +284,7 @@
                                                 <img src="https://via.placeholder.com/400x250/000000/FFFFFF?text=No+Image" class="img-preview" alt="No Image" style="margin-left:70px; width:250px; height:180px; object-fit:cover; object-position:center; border-radius:8px; display:block;">
                                             </a>
                                         {% endif %}
-                                        <div class="status-box ms-3 mt-4" style="min-width:120px;">
+                                        <div class="status-box ms-3 mt-4" style="min-width:120px; position:static; top:auto; right:auto; z-index:auto;">
                                             <div class="fw-semibold text-secondary mb-1" style="font-size:1rem;">Status</div>
                                             <span class="badge bg-warning text-dark px-3 py-2" style="font-size:1rem;">{{ report.status if report.status else 'Pending' }}</span>
                                         </div>
@@ -340,6 +396,24 @@
                 });
             });
         });
+        const removeUserForm = document.getElementById('removeUserForm');
+        const removeUserBtn = document.getElementById('removeUserBtn');
+        if (removeUserForm && removeUserBtn) {
+            removeUserForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Remove this user?',
+                    text: "This will delete the user and all their reports. This action cannot be undone.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#4facfe',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, remove user!'
+                }).then((result) => {
+                    if (result.isConfirmed) removeUserForm.submit();
+                });
+            });
+        }
     </script>
 </body>
 </html>
