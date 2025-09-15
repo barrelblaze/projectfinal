@@ -199,6 +199,26 @@ def view_all_users():
     users = User.query.all()
     return render_template('admin.html', all_users=users, show_users=True)
 
+@app.route('/admin/user/<int:user_id>')
+def admin_user_profile(user_id):
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
+    user = User.query.get_or_404(user_id)
+    user_reports = Report.query.filter_by(user_id=user_id).order_by(Report.id.desc()).all()
+    return render_template('admin.html', admin_user=user, show_admin_user_profile=True, user_reports=user_reports)
+
+@app.route('/admin/delete_user/<int:user_id>', methods=['POST'])
+def admin_delete_user(user_id):
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
+    user = User.query.get_or_404(user_id)
+    # Delete all reports by this user
+    Report.query.filter_by(user_id=user_id).delete()
+    db.session.delete(user)
+    db.session.commit()
+    flash('User and all their reports have been removed.', 'info')
+    return redirect(url_for('view_all_users'))
+
 # ===================== DB INIT =====================
 
 with app.app_context():
