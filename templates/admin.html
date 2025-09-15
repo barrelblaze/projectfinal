@@ -132,7 +132,7 @@
         <div class="row">
             <!-- Dashboard Sidebar -->
             <div class="col-md-3 d-none d-md-block" style="background: linear-gradient(135deg, #4facfe, #00f2fe); min-height:100vh;">
-                <div class="dashboard-card sticky-top" style="top:90px;">
+                <div class="dashboard-card sticky-top">
                     <div class="dashboard-title">Dashboard</div>
                     <div class="d-grid gap-3">
                         <div class="dropdown position-relative">
@@ -158,8 +158,8 @@
                         <button class="btn btn-custom" onclick="resetSort()"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
                     </div>
                 </div>
-                <!-- New white card for visibility below sort card, now sticky -->
-                <div class="dashboard-card sticky-top" style="background:#fff; margin-top:10px; top:180px;">
+                <!-- User Management card: fixed in sidebar, just below sort card -->
+                <div class="dashboard-card" style="background:#fff; position:fixed; left:0; top:290px; width:23%; z-index:1040; margin-left:15px;">
                     <div class="dashboard-title" style="color:#4facfe;">User Management</div>
                     <div class="d-grid gap-2">
                         <a href="{{ url_for('view_all_users') }}" class="btn btn-outline-primary w-100" style="border-radius:10px; font-weight:600;">
@@ -173,10 +173,10 @@
             <div class="col-md-9 col-12" style="background:#fff; min-height:100vh;">
                 <div class="mt-4">
                     {% if show_users %}
-                    <div style="margin-top:80px;">
+                    <div class="mt-4" style="margin-top:90px;">
                         <div class="row align-items-center mb-4">
                             <div class="col-auto">
-                                <a href="{{ url_for('admin_module') }}" class="btn btn-outline-secondary" style="border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-top:8px;">
+                                <a href="{{ url_for('admin_module') }}" class="btn btn-outline-secondary" style="border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-top:32px;">
                                     <i class="bi bi-arrow-left"></i>
                                 </a>
                             </div>
