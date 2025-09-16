@@ -33,6 +33,16 @@ class Report(db.Model):
     image = db.Column(db.String(200))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+class Organization(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    org_name = db.Column(db.String(120), unique=True, nullable=False)
+    username = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    place = db.Column(db.String(120))
+    contact = db.Column(db.String(20))
+    address = db.Column(db.String(200))
+    pincode = db.Column(db.String(20))
+
 # ===================== ROUTES =====================
 
 @app.route('/')
@@ -218,6 +228,46 @@ def admin_delete_user(user_id):
     db.session.commit()
     flash('User and all their reports have been removed.', 'info')
     return redirect(url_for('view_all_users'))
+
+@app.route('/org_register', methods=['GET', 'POST'])
+def org_register():
+    if request.method == 'POST':
+        org_name = request.form['org_name']
+        username = request.form['username']
+        password = request.form['password']
+        re_password = request.form['re_password']
+        place = request.form['place']
+        contact = request.form['contact']
+        address = request.form['address']
+        pincode = request.form['pincode']
+        if password != re_password:
+            flash('Passwords do not match.', 'danger')
+            return render_template('org_register.html')
+        if Organization.query.filter_by(username=username).first():
+            flash('Username already exists.', 'danger')
+            return render_template('org_register.html')
+        if Organization.query.filter_by(org_name=org_name).first():
+            flash('Organization name already exists.', 'danger')
+            return render_template('org_register.html')
+        hashed_pw = generate_password_hash(password)
+        new_org = Organization(
+            org_name=org_name,
+            username=username,
+            password=hashed_pw,
+            place=place,
+            contact=contact,
+            address=address,
+            pincode=pincode
+        )
+        db.session.add(new_org)
+        db.session.commit()
+        flash('Organization registered successfully!')
+        return redirect(url_for('org_verification'))
+    return render_template('org_register.html')
+
+@app.route('/org_verification')
+def org_verification():
+    return render_template('org_verification.html')
 
 # ===================== DB INIT =====================
 
