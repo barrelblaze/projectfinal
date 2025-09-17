@@ -272,23 +272,31 @@
                             </a>
                             <h4 class="mb-0 text-center" style="color:#4facfe; font-weight:600;">All Organizations</h4>
                         </div>
-                        <div class="container mt-4">
+                        <div class="container mt-4" style="max-width:1200px;">
                             {% if orgs and orgs|length > 0 %}
-                                {% for org in orgs %}
-                                    <div style="border:1px solid #ccc; border-radius:8px; padding:16px; margin-bottom:16px; background:#f9f9f9;">
-                                        <strong>Organization Name:</strong> {{ org.org_name }}<br>
-                                        <strong>Username:</strong> {{ org.username }}<br>
-                                        <strong>Place:</strong> {{ org.place }}<br>
-                                        <strong>Contact:</strong> {{ org.contact }}<br>
-                                        <strong>Address:</strong> {{ org.address }}<br>
-                                        <strong>Pincode:</strong> {{ org.pincode }}<br>
-                                        <strong>Proof File:</strong> {{ org.proof_file or 'Not submitted' }}<br>
-                                        <strong>Proof Status:</strong> {{ org.proof_status }}<br>
-                                        <form action="{{ url_for('admin_delete_org', org_id=org.id) }}" method="POST" class="mt-2 delete-org-form" style="margin-top:10px;">
-                                            <button type="submit" style="background:#f44336; color:#fff; border:none; border-radius:6px; padding:7px 18px; font-weight:600; cursor:pointer;">Remove Organization</button>
-                                        </form>
+                                <div class="row justify-content-center w-100" style="max-width:1200px;">
+                                    {% for org in orgs %}
+                                    <div class="col-md-6 col-lg-4 mb-4">
+                                        <div class="card shadow-sm" style="border-radius:15px; background:#fff; min-width:340px;">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title mb-3" style="color:#4facfe; font-weight:700;">{{ org.org_name }}</h5>
+                                                <table class="table table-borderless mb-3" style="font-size:1rem; word-break:break-word;">
+                                                    <tr><td class="text-end fw-semibold" style="width:45%;">Username:</td><td class="text-start">{{ org.username }}</td></tr>
+                                                    <tr><td class="text-end fw-semibold">Contact:</td><td class="text-start">{{ org.contact }}</td></tr>
+                                                    <tr><td class="text-end fw-semibold">Place:</td><td class="text-start">{{ org.place }}</td></tr>
+                                                    <tr><td class="text-end fw-semibold">Address:</td><td class="text-start">{{ org.address }}</td></tr>
+                                                    <tr><td class="text-end fw-semibold">Pincode:</td><td class="text-start">{{ org.pincode }}</td></tr>
+                                                    <tr><td class="text-end fw-semibold">Proof File:</td><td class="text-start">{{ org.proof_file or 'Not submitted' }}</td></tr>
+                                                    <tr><td class="text-end fw-semibold">Proof Status:</td><td class="text-start">{{ org.proof_status }}</td></tr>
+                                                </table>
+                                                <form action="{{ url_for('admin_delete_org', org_id=org.id) }}" method="POST" class="mt-2 delete-org-form">
+                                                    <button type="submit" class="btn btn-remove-report w-100">Remove Organization</button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
-                                {% endfor %}
+                                    {% endfor %}
+                                </div>
                             {% else %}
                                 <p class="text-center text-muted">No organizations registered.</p>
                             {% endif %}
