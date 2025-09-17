@@ -165,7 +165,7 @@
                         <a href="{{ url_for('view_all_users') }}" class="btn btn-outline-primary w-100" style="border-radius:10px; font-weight:600;">
                             <i class="bi bi-people"></i> View All Users
                         </a>
-                        <a href="#" class="btn btn-outline-primary w-100 mt-2" style="border-radius:10px; font-weight:600;">
+                        <a href="{{ url_for('view_all_orgs') }}" class="btn btn-outline-primary w-100 mt-2" style="border-radius:10px; font-weight:600;">
                             <i class="bi bi-building"></i> View All Organizations
                         </a>
                         <a href="{{ url_for('verify_logins') }}" class="btn btn-outline-primary w-100 mt-2" style="border-radius:10px; font-weight:600;">
@@ -231,35 +231,68 @@
                         {% endif %}
                     </div>
                     {% elif show_users %}
-                    <div class="d-flex flex-column justify-content-center align-items-center" style="min-height:80vh;">
-                        <div class="position-relative mb-4 w-100" style="max-width:900px; margin-top:-150px;">
+                    <div class="position-relative mb-4 w-100" style="max-width:900px; margin:0 auto; margin-top:90px;">
+                        <a href="{{ url_for('admin_module') }}" class="btn btn-outline-secondary" style="border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; position:absolute; left:-70px; top:50%; transform:translateY(-50%);">
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+                        <h4 class="mb-0 text-center" style="color:#4facfe; font-weight:600;">All Users</h4>
+                    </div>
+                    <div class="row justify-content-center w-100" style="max-width:900px;">
+                        {% for user in all_users %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <a href="{{ url_for('admin_user_profile', user_id=user.id) }}" style="text-decoration:none; color:inherit;">
+                                <div class="card shadow-sm" style="border-radius:15px; cursor:pointer; transition:box-shadow 0.2s;">
+                                    <div class="card-body text-center">
+                                        {% if user.profile_pic %}
+                                            <img src="{{ url_for('static', filename='uploads/' ~ user.profile_pic) }}" alt="Profile" class="rounded-circle mb-3" style="width:70px; height:70px; object-fit:cover; border:3px solid #4facfe;">
+                                        {% else %}
+                                            <img src="https://avatars.dicebear.com/api/initials/{{ user.username }}.svg" alt="Profile" class="rounded-circle mb-3" style="width:70px; height:70px; border:3px solid #4facfe;">
+                                        {% endif %}
+                                        <h5 class="card-title mb-1">{{ user.full_name or user.username }}</h5>
+                                        <p class="card-text mb-1"><strong>Username:</strong> {{ user.username }}</p>
+                                        <p class="card-text mb-1"><strong>Contact:</strong> {{ user.contact }}</p>
+                                        <p class="card-text mb-1"><strong>Place:</strong> {{ user.place }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% elif show_verify_logins %}
+                        <div class="position-relative w-100" style="max-width:900px; margin:0 auto; margin-top:90px;">
                             <a href="{{ url_for('admin_module') }}" class="btn btn-outline-secondary" style="border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; position:absolute; left:-70px; top:50%; transform:translateY(-50%);">
                                 <i class="bi bi-arrow-left"></i>
                             </a>
-                            <h4 class="mb-0 text-center" style="color:#4facfe; font-weight:600;">All Users</h4>
+                            <h4 class="mb-0 text-center" style="color:#4facfe; font-weight:600;">verify logins</h4>
                         </div>
-                        <div class="row justify-content-center w-100" style="max-width:900px;">
-                            {% for user in all_users %}
-                            <div class="col-md-6 col-lg-4 mb-4">
-                                <a href="{{ url_for('admin_user_profile', user_id=user.id) }}" style="text-decoration:none; color:inherit;">
-                                    <div class="card shadow-sm" style="border-radius:15px; cursor:pointer; transition:box-shadow 0.2s;">
-                                        <div class="card-body text-center">
-                                            {% if user.profile_pic %}
-                                                <img src="{{ url_for('static', filename='uploads/' ~ user.profile_pic) }}" alt="Profile" class="rounded-circle mb-3" style="width:70px; height:70px; object-fit:cover; border:3px solid #4facfe;">
-                                            {% else %}
-                                                <img src="https://avatars.dicebear.com/api/initials/{{ user.username }}.svg" alt="Profile" class="rounded-circle mb-3" style="width:70px; height:70px; border:3px solid #4facfe;">
-                                            {% endif %}
-                                            <h5 class="card-title mb-1">{{ user.full_name or user.username }}</h5>
-                                            <p class="card-text mb-1"><strong>Username:</strong> {{ user.username }}</p>
-                                            <p class="card-text mb-1"><strong>Contact:</strong> {{ user.contact }}</p>
-                                            <p class="card-text mb-1"><strong>Place:</strong> {{ user.place }}</p>
-                                        </div>
+                    {% elif show_all_orgs %}
+                        <div class="position-relative w-100" style="max-width:900px; margin:0 auto; margin-top:90px;">
+                            <a href="{{ url_for('admin_module') }}" class="btn btn-outline-secondary" style="border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; position:absolute; left:-70px; top:50%; transform:translateY(-50%);">
+                                <i class="bi bi-arrow-left"></i>
+                            </a>
+                            <h4 class="mb-0 text-center" style="color:#4facfe; font-weight:600;">All Organizations</h4>
+                        </div>
+                        <div class="container mt-4">
+                            {% if orgs and orgs|length > 0 %}
+                                {% for org in orgs %}
+                                    <div style="border:1px solid #ccc; border-radius:8px; padding:16px; margin-bottom:16px; background:#f9f9f9;">
+                                        <strong>Organization Name:</strong> {{ org.org_name }}<br>
+                                        <strong>Username:</strong> {{ org.username }}<br>
+                                        <strong>Place:</strong> {{ org.place }}<br>
+                                        <strong>Contact:</strong> {{ org.contact }}<br>
+                                        <strong>Address:</strong> {{ org.address }}<br>
+                                        <strong>Pincode:</strong> {{ org.pincode }}<br>
+                                        <strong>Proof File:</strong> {{ org.proof_file or 'Not submitted' }}<br>
+                                        <strong>Proof Status:</strong> {{ org.proof_status }}<br>
+                                        <form action="{{ url_for('admin_delete_org', org_id=org.id) }}" method="POST" class="mt-2 delete-org-form" style="margin-top:10px;">
+                                            <button type="submit" style="background:#f44336; color:#fff; border:none; border-radius:6px; padding:7px 18px; font-weight:600; cursor:pointer;">Remove Organization</button>
+                                        </form>
                                     </div>
-                                </a>
-                            </div>
-                            {% endfor %}
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-center text-muted">No organizations registered.</p>
+                            {% endif %}
                         </div>
-                    </div>
                     {% else %}
                     <h4 class="mb-3 text-center" style="margin-top:90px;">All Reports</h4>
                     <div id="allReports" class="report-section active" style="margin-top:20px;">
@@ -414,6 +447,22 @@
                 });
             });
         }
+        document.querySelectorAll('.delete-org-form').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Remove this organization?',
+                    text: "This will delete the organization and all its data. This action cannot be undone.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#4facfe',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, remove organization!'
+                }).then((result) => {
+                    if (result.isConfirmed) form.submit();
+                });
+            });
+        });
     </script>
 </body>
 </html>

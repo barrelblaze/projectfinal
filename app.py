@@ -310,7 +310,25 @@ def delete_all_orgs():
 def verify_logins():
     if not session.get('admin_logged_in'):
         return redirect(url_for('login'))
-    return '<h2 style="text-align:center; margin-top:100px;">verify logins</h2>'
+    # Render admin.html with a flag to show the verify logins section
+    return render_template('admin.html', show_verify_logins=True)
+
+@app.route('/view_all_orgs')
+def view_all_orgs():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
+    orgs = Organization.query.all()
+    return render_template('admin.html', show_all_orgs=True, orgs=orgs)
+
+@app.route('/admin/delete_org/<int:org_id>', methods=['POST'])
+def admin_delete_org(org_id):
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
+    org = Organization.query.get_or_404(org_id)
+    db.session.delete(org)
+    db.session.commit()
+    flash('Organization and all its data have been removed.', 'info')
+    return redirect(url_for('view_all_orgs'))
 
 # ===================== DB INIT =====================
 
