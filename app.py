@@ -42,6 +42,8 @@ class Organization(db.Model):
     contact = db.Column(db.String(20))
     address = db.Column(db.String(200))
     pincode = db.Column(db.String(20))
+    proof_file = db.Column(db.String(200))  # filename of uploaded proof
+    proof_status = db.Column(db.String(50), default='Pending')  # Pending, Approved, Rejected
 
 # ===================== ROUTES =====================
 
@@ -92,6 +94,11 @@ def login():
             session['user_id'] = user.id
             flash("Login successful!", "success")
             return redirect(url_for('index'))
+        org = Organization.query.filter_by(username=username).first()
+        if org and check_password_hash(org.password, password):
+            session['org_id'] = org.id
+            flash('Organization login successful!', 'success')
+            return redirect(url_for('org_verification'))
         flash("Invalid credentials", "danger")
     return render_template('login.html')
 
@@ -261,13 +268,43 @@ def org_register():
         )
         db.session.add(new_org)
         db.session.commit()
-        flash('Organization registered successfully!')
-        return redirect(url_for('org_verification'))
+        flash('Organization registered successfully! Please log in.', 'success')
+        return redirect(url_for('login'))
     return render_template('org_register.html')
 
-@app.route('/org_verification')
+@app.route('/org_verification', methods=['GET', 'POST'])
 def org_verification():
-    return render_template('org_verification.html')
+    if 'org_id' not in session:
+        return redirect(url_for('login'))
+    org = Organization.query.get(session['org_id'])
+    proof_file = org.proof_file if org.proof_file else None
+    proof_status = org.proof_status
+    if request.method == 'POST':
+        # Only allow submission if no proof has been submitted yet
+        if not org.proof_file:
+            file = request.files.get('proof_file')
+            if file and file.filename != '':
+                filename = datetime.now().strftime("%Y%m%d%H%M%S_") + file.filename
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                org.proof_file = filename
+                org.proof_status = 'Pending'
+                db.session.commit()
+                flash('Proof has been sent for review. Pending review.', 'info')
+                session['org_proof_file'] = filename
+                proof_file = filename
+                proof_status = 'Pending'
+            else:
+                flash('Please select a file to upload.', 'danger')
+        else:
+            flash('Proof already submitted. Only one submission allowed.', 'warning')
+    return render_template('org_verification.html', proof_sent=bool(proof_file), proof_file=proof_file, proof_status=proof_status)
+
+@app.route('/delete_all_orgs', methods=['POST'])
+def delete_all_orgs():
+    Organization.query.delete()
+    db.session.commit()
+    flash('All organizations deleted.', 'info')
+    return redirect(url_for('org_register'))
 
 # ===================== DB INIT =====================
 
