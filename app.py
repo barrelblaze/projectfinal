@@ -306,6 +306,12 @@ def delete_all_orgs():
     flash('All organizations deleted.', 'info')
     return redirect(url_for('org_register'))
 
+@app.route('/verify_logins')
+def verify_logins():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
+    return '<h2 style="text-align:center; margin-top:100px;">verify logins</h2>'
+
 # ===================== DB INIT =====================
 
 with app.app_context():
