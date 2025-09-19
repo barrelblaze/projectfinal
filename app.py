@@ -85,7 +85,9 @@ def admin_module():
     all_reports = Report.query.order_by(Report.id.desc()).all()
     users = User.query.all()
     user_map = {u.id: u for u in users}
-    return render_template('admin.html', message="This is admin module", all_reports=all_reports, user_map=user_map)
+    orgs = Organization.query.all()
+    org_map = {o.id: o for o in orgs}
+    return render_template('admin.html', message="This is admin module", all_reports=all_reports, user_map=user_map, org_map=org_map)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

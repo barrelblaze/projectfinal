@@ -367,6 +367,145 @@
                                 <p class="text-center text-muted">No organizations registered.</p>
                             {% endif %}
                         </div>
+                    {% elif show_all_orgs %}
+                    <div class="position-relative mb-4 w-100" style="max-width:900px; margin:0 auto; margin-top:40px; padding-left:70px;">
+                        <a href="{{ url_for('admin_module') }}" class="btn btn-outline-secondary" style="border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; position:absolute; left:0; top:50%; transform:translateY(-50%); z-index:2;">
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+                        <h4 class="mb-0 text-center" style="color:#4facfe; font-weight:600;">All Organizations</h4>
+                    </div>
+                    <div class="row justify-content-center w-100" style="max-width:1200px;">
+                        {% for org in orgs %}
+                        <div class="col-12 mb-4">
+                            <div class="profile-card w-100 shadow-lg" style="background: #fff; border-radius: 15px; padding: 24px 20px; box-shadow: 0 6px 24px rgba(0,0,0,0.15);">
+                                <div class="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3">
+                                    <div class="text-center text-md-start position-relative">
+                                        {% if org.profile_pic %}
+                                            <a href="#" class="profilePicPreviewLink">
+                                                <img src="{{ url_for('static', filename='uploads/' ~ org.profile_pic) }}" alt="Org Avatar" class="rounded-circle border border-3 border-white shadow" style="width: 100px; height: 100px; object-fit: cover; background: #e9ecef;">
+                                            </a>
+                                        {% else %}
+                                            <a href="#" class="profilePicPreviewLink">
+                                                <img src="https://avatars.dicebear.com/api/initials/{{ org.org_name|default('Org') }}.svg" alt="Org Avatar" class="rounded-circle border border-3 border-white shadow" style="width: 100px; height: 100px; background: #e9ecef;">
+                                            </a>
+                                        {% endif %}
+                                        <span class="position-absolute translate-middle" style="bottom: 4px; left: 85px;">
+                                            {% if org.proof_status == 'Approved' %}
+                                                <span class="bg-success text-white d-inline-flex align-items-center justify-content-center rounded-circle shadow" style="width: 22px; height: 22px; border:2px solid #fff;">
+                                                    <i class="bi bi-check2" style="font-size:12px;"></i>
+                                                </span>
+                                            {% elif org.proof_status == 'Rejected' %}
+                                                <span class="bg-danger text-white d-inline-flex align-items-center justify-content-center rounded-circle shadow" style="width: 22px; height: 22px; border:2px solid #fff;">
+                                                    <i class="bi bi-x" style="font-size:12px;"></i>
+                                                </span>
+                                            {% else %}
+                                                <span class="bg-warning text-dark d-inline-flex align-items-center justify-content-center rounded-circle shadow" style="width: 22px; height: 22px; border:2px solid #fff;">
+                                                    <i class="bi bi-clock" style="font-size:12px;"></i>
+                                                </span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1 w-100">
+                                        <h3 class="fw-bold mb-1 text-dark" style="letter-spacing:1px; font-size:1.4rem;">{{ org.org_name }}</h3>
+                                        <p class="text-secondary mb-2" style="font-size:1rem;">@{{ org.username }}</p>
+                                        <div class="mb-3">
+                                            <span class="badge bg-info bg-gradient px-2 py-1 text-white shadow-sm" style="font-size:0.9rem;">{{ org.place if org.place else 'No place set' }}</span>
+                                        </div>
+
+                                        <div class="row g-2">
+                                            <div class="col-md-6">
+                                                <div class="p-2 rounded border bg-light h-100">
+                                                    <div class="small text-muted mb-1">Contact</div>
+                                                    <div class="fw-semibold" style="font-size:0.9rem;">{{ org.contact if org.contact else 'N/A' }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="p-2 rounded border bg-light h-100">
+                                                    <div class="small text-muted mb-1">Pincode</div>
+                                                    <div class="fw-semibold" style="font-size:0.9rem;">{{ org.pincode if org.pincode else 'N/A' }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="p-2 rounded border bg-light">
+                                                    <div class="small text-muted mb-1">Address</div>
+                                                    <div class="fw-semibold" style="font-size:0.9rem;">{{ org.address if org.address else 'N/A' }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="p-2 rounded border bg-light h-100">
+                                                    <div class="small text-muted mb-1">Proof Status</div>
+                                                    <div>
+                                                        {% if org.proof_status == 'Approved' %}
+                                                            <span class="badge bg-success" style="font-size:0.8rem;">Approved</span>
+                                                        {% elif org.proof_status == 'Rejected' %}
+                                                            <span class="badge bg-danger" style="font-size:0.8rem;">Rejected</span>
+                                                        {% elif org.proof_status == 'Pending' %}
+                                                            <span class="badge bg-warning text-dark" style="font-size:0.8rem;">Pending</span>
+                                                        {% else %}
+                                                            <span class="badge bg-secondary" style="font-size:0.8rem;">N/A</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="p-2 rounded border bg-light h-100">
+                                                    <div class="small text-muted mb-1">Proof File</div>
+                                                    <div>
+                                                        {% if org.proof_file %}
+                                                            {% set ext = org.proof_file.split('.')[-1].lower() %}
+                                                            {% if ext in ['jpg','jpeg','png','gif','jfif'] %}
+                                                                <a href="#" data-bs-toggle="modal" data-bs-target="#proofPreviewModal{{ org.id }}" class="d-inline-block">
+                                                                    <img src="{{ url_for('static', filename='uploads/' ~ org.proof_file) }}" alt="Proof" style="max-width:80px; max-height:60px; border-radius:6px; border:1px solid #dee2e6;">
+                                                                </a>
+                                                            {% elif ext in ['pdf'] %}
+                                                                <a href="{{ url_for('static', filename='uploads/' ~ org.proof_file) }}" target="_blank" class="btn btn-outline-primary btn-sm" style="font-size:0.8rem;">View PDF</a>
+                                                            {% elif ext in ['doc','docx'] %}
+                                                                <a href="{{ url_for('static', filename='uploads/' ~ org.proof_file) }}" target="_blank" class="btn btn-outline-primary btn-sm" style="font-size:0.8rem;">Download Document</a>
+                                                            {% else %}
+                                                                <a href="{{ url_for('static', filename='uploads/' ~ org.proof_file) }}" target="_blank" class="btn btn-outline-primary btn-sm" style="font-size:0.8rem;">View File</a>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            <span class="text-secondary" style="font-size:0.9rem;">Not submitted</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Remove Organization Button -->
+                                        <div class="mt-3 text-center">
+                                            <form action="{{ url_for('admin_delete_org', org_id=org.id) }}" method="POST" class="delete-org-form">
+                                                <button type="submit" class="btn btn-outline-danger px-3 py-2" style="font-size:0.9rem;">Remove Organization</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <!-- Proof Preview Modals for View All Organizations -->
+                        {% for org in orgs %}
+                            {% if org.proof_file %}
+                                {% set ext = org.proof_file.split('.')[-1].lower() %}
+                                {% if ext in ['jpg','jpeg','png','gif','jfif'] %}
+                                <div class="modal fade" id="proofPreviewModal{{ org.id }}" tabindex="-1" aria-labelledby="proofPreviewLabel{{ org.id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="proofPreviewLabel{{ org.id }}">Proof Preview - {{ org.org_name }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="{{ url_for('static', filename='uploads/' ~ org.proof_file) }}" alt="Proof" style="max-width:100%; max-height:70vh; border-radius:10px; border:1px solid #dee2e6;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                     {% else %}
                     <h4 class="mb-3 text-center" style="margin-top:90px;">All Reports</h4>
                     <div id="allReports" class="report-section active" style="margin-top:20px;">
@@ -393,7 +532,30 @@
                                         {% endif %}
                                         <div class="status-box ms-3 mt-4" style="min-width:120px; position:static; top:auto; right:auto; z-index:auto;">
                                             <div class="fw-semibold text-secondary mb-1" style="font-size:1rem;">Status</div>
-                                            <span class="badge bg-warning text-dark px-3 py-2" style="font-size:1rem;">{{ report.status if report.status else 'Pending' }}</span>
+                                            {% set current_status = report.status if report.status else 'Pending' %}
+                                            {% if current_status == 'Acknowledged' %}
+                                                <span class="badge bg-primary px-3 py-2" style="font-size:1rem;">Acknowledged</span>
+                                            {% elif current_status == 'Solved' %}
+                                                <span class="badge bg-success px-3 py-2" style="font-size:1rem;">Solved</span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark px-3 py-2" style="font-size:1rem;">Pending</span>
+                                            {% endif %}
+                                            {% if report.updated_by_org_id and org_map %}
+                                            {% set upd_org = org_map.get(report.updated_by_org_id) %}
+                                            {% if upd_org %}
+                                            <div class="mt-2">
+                                                <div class="text-secondary small">by</div>
+                                                <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded border bg-light mt-1">
+                                                    {% if upd_org.profile_pic %}
+                                                        <img src="{{ url_for('static', filename='uploads/' ~ upd_org.profile_pic) }}" alt="Org" class="rounded-circle border" style="width:28px; height:28px; object-fit:cover;">
+                                                    {% else %}
+                                                        <img src="https://avatars.dicebear.com/api/initials/{{ upd_org.username }}.svg" alt="Org" class="rounded-circle border" style="width:28px; height:28px;">
+                                                    {% endif %}
+                                                    <span class="text-secondary" style="font-size:0.95rem;"><i class="bi bi-building me-1"></i><strong>{{ upd_org.username }}</strong></span>
+                                                </span>
+                                            </div>
+                                            {% endif %}
+                                            {% endif %}
                                         </div>
                                     </div>
                                     <div class="card-body card-body-custom">
@@ -428,6 +590,17 @@
         <div class="modal-content bg-dark">
           <button type="button" class="modal-close-btn" data-bs-dismiss="modal" aria-label="Close">&times;</button>
           <img id="modalImage" src="" alt="Preview" style="width:100%;height:80vh;object-fit:contain;background-color:black;display:block;" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for profile image preview -->
+    <div class="modal fade" id="profileImageModal" tabindex="-1" aria-labelledby="profileImageModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-transparent border-0">
+          <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+            <img id="profileModalImage" src="" alt="Profile Preview" class="rounded-circle border border-4 border-white shadow" style="width: 220px; height: 220px; object-fit: cover; background: #e9ecef;">
+          </div>
         </div>
       </div>
     </div>
@@ -484,6 +657,16 @@
                 e.preventDefault();
                 modalImage.src = this.getAttribute('data-img');
                 imageModal.show();
+            });
+        });
+
+        // Profile image click-to-preview (for all profile cards)
+        document.querySelectorAll('.profilePicPreviewLink').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const img = link.querySelector('img');
+                document.getElementById('profileModalImage').src = img.src;
+                new bootstrap.Modal(document.getElementById('profileImageModal')).show();
             });
         });
 
