@@ -97,8 +97,10 @@ def login():
         org = Organization.query.filter_by(username=username).first()
         if org and check_password_hash(org.password, password):
             session['org_id'] = org.id
-            flash('Organization login successful!', 'success')
-            return redirect(url_for('org_verification'))
+            if org.proof_status == 'Approved':
+                return redirect(url_for('org_home'))
+            else:
+                return redirect(url_for('org_verification'))
         flash("Invalid credentials", "danger")
     return render_template('login.html')
 
@@ -279,6 +281,9 @@ def org_verification():
     org = Organization.query.get(session['org_id'])
     proof_file = org.proof_file if org.proof_file else None
     proof_status = org.proof_status
+    if proof_status == 'Approved':
+        session.pop('org_id', None)
+        return redirect(url_for('login'))
     if request.method == 'POST':
         # Only allow submission if no proof has been submitted yet
         if not org.proof_file:
@@ -310,8 +315,9 @@ def delete_all_orgs():
 def verify_logins():
     if not session.get('admin_logged_in'):
         return redirect(url_for('login'))
-    # Render admin.html with a flag to show the verify logins section
-    return render_template('admin.html', show_verify_logins=True)
+    orgs = Organization.query.all()
+    # Render admin.html with a flag to show the verify logins section and pass orgs
+    return render_template('admin.html', show_verify_logins=True, orgs=orgs)
 
 @app.route('/view_all_orgs')
 def view_all_orgs():
@@ -329,6 +335,27 @@ def admin_delete_org(org_id):
     db.session.commit()
     flash('Organization and all its data have been removed.', 'info')
     return redirect(url_for('view_all_orgs'))
+
+@app.route('/admin/verify_org/<int:org_id>', methods=['POST'])
+def admin_verify_org(org_id):
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
+    org = Organization.query.get_or_404(org_id)
+    action = request.form.get('action')
+    if action == 'approve':
+        org.proof_status = 'Approved'
+        flash('Organization proof approved.', 'success')
+    elif action == 'reject':
+        org.proof_status = 'Rejected'
+        flash('Organization proof rejected.', 'danger')
+    db.session.commit()
+    return redirect(url_for('verify_logins'))
+
+@app.route('/org_home')
+def org_home():
+    if 'org_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('org_home.html')
 
 # ===================== DB INIT =====================
 

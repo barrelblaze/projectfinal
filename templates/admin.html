@@ -268,13 +268,6 @@
                             </a>
                             <h4 class="mb-0 text-center" style="color:#4facfe; font-weight:600;">verify logins</h4>
                         </div>
-                    {% elif show_all_orgs %}
-                        <div class="position-relative w-100" style="max-width:900px; margin:0 auto; margin-top:40px; padding-left:70px;">
-                            <a href="{{ url_for('admin_module') }}" class="btn btn-outline-secondary" style="border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; position:absolute; left:0; top:50%; transform:translateY(-50%); z-index:2;">
-                                <i class="bi bi-arrow-left"></i>
-                            </a>
-                            <h4 class="mb-0 text-center" style="color:#4facfe; font-weight:600;">All Organizations</h4>
-                        </div>
                         <div class="container mt-4" style="max-width:1200px;">
                             {% if orgs and orgs|length > 0 %}
                                 <div class="row justify-content-center w-100" style="max-width:1200px;">
@@ -289,12 +282,58 @@
                                                     <tr><td class="text-end fw-semibold">Place:</td><td class="text-start">{{ org.place }}</td></tr>
                                                     <tr><td class="text-end fw-semibold">Address:</td><td class="text-start">{{ org.address }}</td></tr>
                                                     <tr><td class="text-end fw-semibold">Pincode:</td><td class="text-start">{{ org.pincode }}</td></tr>
-                                                    <tr><td class="text-end fw-semibold">Proof File:</td><td class="text-start">{{ org.proof_file or 'Not submitted' }}</td></tr>
+                                                    <tr><td class="text-end fw-semibold">Proof File:</td>
+                                                        <td class="text-start">
+                                                            {% if org.proof_file %}
+                                                                {% set ext = org.proof_file.split('.')[-1].lower() %}
+                                                                {% if ext in ['jpg', 'jpeg', 'png', 'gif', 'jfif'] %}
+                                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#proofPreviewModal{{ org.id }}">
+                                                                        <img src="{{ url_for('static', filename='uploads/' ~ org.proof_file) }}" alt="Proof" style="max-width:120px; max-height:120px; border-radius:8px; border:2px solid #4facfe; cursor:pointer;">
+                                                                    </a>
+                                                                    <!-- Modal for image preview -->
+                                                                    <div class="modal fade" id="proofPreviewModal{{ org.id }}" tabindex="-1" aria-labelledby="proofPreviewLabel{{ org.id }}" aria-hidden="true">
+                                                                      <div class="modal-dialog modal-dialog-centered">
+                                                                        <div class="modal-content">
+                                                                          <div class="modal-header">
+                                                                            <h5 class="modal-title" id="proofPreviewLabel{{ org.id }}">Proof Preview</h5>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                          </div>
+                                                                          <div class="modal-body text-center">
+                                                                            <img src="{{ url_for('static', filename='uploads/' ~ org.proof_file) }}" alt="Proof" style="max-width:100%; max-height:70vh; border-radius:10px; border:2px solid #4facfe;">
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>
+                                                                {% elif ext in ['pdf'] %}
+                                                                    <a href="{{ url_for('static', filename='uploads/' ~ org.proof_file) }}" target="_blank">View PDF</a>
+                                                                {% elif ext in ['doc', 'docx'] %}
+                                                                    <a href="{{ url_for('static', filename='uploads/' ~ org.proof_file) }}" target="_blank">Download Document</a>
+                                                                {% else %}
+                                                                    <a href="{{ url_for('static', filename='uploads/' ~ org.proof_file) }}" target="_blank">View File</a>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                Not submitted
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
                                                     <tr><td class="text-end fw-semibold">Proof Status:</td><td class="text-start">{{ org.proof_status }}</td></tr>
                                                 </table>
-                                                <form action="{{ url_for('admin_delete_org', org_id=org.id) }}" method="POST" class="mt-2 delete-org-form">
-                                                    <button type="submit" class="btn btn-remove-report w-100">Remove Organization</button>
-                                                </form>
+                                                <div class="d-flex justify-content-center gap-3 mb-2">
+                                                    {% if org.proof_status == 'Approved' %}
+                                                        <span class="badge bg-success px-4 py-2" style="font-size:1.1rem;">Approved</span>
+                                                    {% elif org.proof_status == 'Rejected' %}
+                                                        <span class="badge bg-danger px-4 py-2" style="font-size:1.1rem;">Rejected</span>
+                                                    {% else %}
+                                                        <form action="{{ url_for('admin_verify_org', org_id=org.id) }}" method="POST" style="display:inline;">
+                                                            <input type="hidden" name="action" value="approve">
+                                                            <button type="submit" class="btn btn-success" style="min-width:100px;">Approve</button>
+                                                        </form>
+                                                        <form action="{{ url_for('admin_verify_org', org_id=org.id) }}" method="POST" style="display:inline;">
+                                                            <input type="hidden" name="action" value="reject">
+                                                            <button type="submit" class="btn btn-danger" style="min-width:100px;">Reject</button>
+                                                        </form>
+                                                    {% endif %}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

@@ -10,7 +10,11 @@
     <div class="card shadow p-5 text-center" style="max-width:600px; width:100%; border-radius:20px;">
         <h2 class="mb-4" style="color:#4facfe; font-size:2rem;">Verification Page</h2>
         <p style="font-size:1rem; color:#4facfe; opacity:0.7; margin-bottom:2rem;">Upload any legal registration proof of your organization</p>
-        {% if proof_file %}
+        {% if proof_status == 'Rejected' %}
+            <div class="alert alert-danger mt-3" role="alert">
+                Rejected, can't verify proof
+            </div>
+        {% elif proof_file %}
             <div class="alert alert-info mt-3" role="alert">
                 Proof has been sent for review. <b>Pending review.</b>
             </div>
