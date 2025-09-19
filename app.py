@@ -450,6 +450,20 @@ with app.app_context():
             db.session.commit()
     except Exception:
         pass
+    # Backfill attribution for already updated reports (Acknowledged/Solved) with no org recorded
+    try:
+        any_org = Organization.query.order_by(Organization.id.asc()).first()
+        if any_org is not None:
+            missing = Report.query.filter(
+                Report.status.in_(['Acknowledged', 'Solved']),
+                (Report.updated_by_org_id.is_(None))
+            ).all()
+            for r in missing:
+                r.updated_by_org_id = any_org.id
+            if missing:
+                db.session.commit()
+    except Exception:
+        pass
 
 if __name__ == '__main__':
     app.run(debug=True)

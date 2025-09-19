@@ -261,13 +261,16 @@
                                         {% if report.updated_by_org_id and org_map %}
                                         {% set upd_org = org_map.get(report.updated_by_org_id) %}
                                         {% if upd_org %}
-                                        <div class="d-flex align-items-center gap-2 mt-2">
-                                            {% if upd_org.profile_pic %}
-                                                <img src="{{ url_for('static', filename='uploads/' ~ upd_org.profile_pic) }}" alt="Org" class="rounded-circle border" style="width:22px; height:22px; object-fit:cover;">
-                                            {% else %}
-                                                <img src="https://avatars.dicebear.com/api/initials/{{ upd_org.username }}.svg" alt="Org" class="rounded-circle border" style="width:22px; height:22px;">
-                                            {% endif %}
-                                            <span class="small text-muted">Updated by {{ upd_org.username }}</span>
+                                        <div class="mt-2">
+                                            <span class="text-secondary small me-2">by</span>
+                                            <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded border bg-light">
+                                                {% if upd_org.profile_pic %}
+                                                    <img src="{{ url_for('static', filename='uploads/' ~ upd_org.profile_pic) }}" alt="Org" class="rounded-circle border" style="width:28px; height:28px; object-fit:cover;">
+                                                {% else %}
+                                                    <img src="https://avatars.dicebear.com/api/initials/{{ upd_org.username }}.svg" alt="Org" class="rounded-circle border" style="width:28px; height:28px;">
+                                                {% endif %}
+                                                <span class="text-secondary" style="font-size:0.95rem;"><i class="bi bi-building me-1"></i><strong>{{ upd_org.username }}</strong></span>
+                                            </span>
                                         </div>
                                         {% endif %}
                                         {% endif %}
@@ -318,13 +321,16 @@
                                         {% if report.updated_by_org_id and org_map %}
                                         {% set upd_org = org_map.get(report.updated_by_org_id) %}
                                         {% if upd_org %}
-                                        <div class="d-flex align-items-center gap-2 mt-2">
-                                            {% if upd_org.profile_pic %}
-                                                <img src="{{ url_for('static', filename='uploads/' ~ upd_org.profile_pic) }}" alt="Org" class="rounded-circle border" style="width:22px; height:22px; object-fit:cover;">
-                                            {% else %}
-                                                <img src="https://avatars.dicebear.com/api/initials/{{ upd_org.username }}.svg" alt="Org" class="rounded-circle border" style="width:22px; height:22px;">
-                                            {% endif %}
-                                            <span class="small text-muted">Updated by {{ upd_org.username }}</span>
+                                        <div class="mt-2">
+                                            <span class="text-secondary small me-2">by</span>
+                                            <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded border bg-light">
+                                                {% if upd_org.profile_pic %}
+                                                    <img src="{{ url_for('static', filename='uploads/' ~ upd_org.profile_pic) }}" alt="Org" class="rounded-circle border" style="width:28px; height:28px; object-fit:cover;">
+                                                {% else %}
+                                                    <img src="https://avatars.dicebear.com/api/initials/{{ upd_org.username }}.svg" alt="Org" class="rounded-circle border" style="width:28px; height:28px;">
+                                                {% endif %}
+                                                <span class="text-secondary" style="font-size:0.95rem;"><i class="bi bi-building me-1"></i><strong>{{ upd_org.username }}</strong></span>
+                                            </span>
                                         </div>
                                         {% endif %}
                                         {% endif %}
