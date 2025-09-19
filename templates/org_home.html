@@ -65,6 +65,20 @@
             <!-- Main Content -->
             <div class="col-md-9 col-12">
                 <div class="mt-5 pt-4">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="mt-3" id="flash-messages">
+                                {% for category, message in messages %}
+                                    {% if category == 'org_status' %}
+                                        <div class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
+                                            {{ message }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
                     <h2 class="fw-bold text-center mb-4" style="color:#4facfe; letter-spacing:1px;">All Reports</h2>
                     <div id="allReports" class="report-section">
                         {% if all_reports %}
@@ -88,9 +102,34 @@
                                                 <img src="https://via.placeholder.com/400x250/000000/FFFFFF?text=No+Image" class="img-preview" alt="No Image" style="margin-left:70px; width:250px; height:180px; object-fit:cover; object-position:center; border-radius:8px; display:block;">
                                             </a>
                                         {% endif %}
-                                        <div class="status-box ms-3 mt-4" style="min-width:120px;">
+                                        <div class="status-box ms-3 mt-4" style="min-width:160px;">
                                             <div class="fw-semibold text-secondary mb-1" style="font-size:1rem;">Status</div>
-                                            <span class="badge bg-warning text-dark px-3 py-2" style="font-size:1rem;">{{ report.status if report.status else 'Pending' }}</span>
+                                            {% set current_status = report.status if report.status else 'Pending' %}
+                                            {% if current_status == 'Acknowledged' %}
+                                                <span class="badge bg-primary px-3 py-2" style="font-size:1rem;">Acknowledged</span>
+                                            {% elif current_status == 'Solved' %}
+                                                <span class="badge bg-success px-3 py-2" style="font-size:1rem;">Solved</span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark px-3 py-2" style="font-size:1rem;">Pending</span>
+                                            {% endif %}
+                                            <div class="mt-2 d-flex flex-column gap-2">
+                                                {% if current_status != 'Acknowledged' %}
+                                                <form action="{{ url_for('org_update_report_status', report_id=report.id) }}" method="POST" class="m-0 status-form" data-status="Acknowledged">
+                                                    <input type="hidden" name="status" value="Acknowledged">
+                                                    <button type="submit" class="btn btn-sm btn-primary w-100" style="border-radius:10px;">
+                                                        <i class="bi bi-hand-thumbs-up me-1"></i> Acknowledge
+                                                    </button>
+                                                </form>
+                                                {% endif %}
+                                                {% if current_status != 'Solved' %}
+                                                <form action="{{ url_for('org_update_report_status', report_id=report.id) }}" method="POST" class="m-0 status-form" data-status="Solved">
+                                                    <input type="hidden" name="status" value="Solved">
+                                                    <button type="submit" class="btn btn-sm btn-success w-100" style="border-radius:10px;">
+                                                        <i class="bi bi-check2-circle me-1"></i> Mark Solved
+                                                    </button>
+                                                </form>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="card-body card-body-custom">
@@ -123,6 +162,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function resetSort() { location.reload(); }
         function filterByCategory(category) {
@@ -154,6 +194,24 @@
                 e.preventDefault();
                 modalImage.src = this.getAttribute('data-img');
                 imageModal.show();
+            });
+        });
+
+        // Confirm before status change
+        document.querySelectorAll('.status-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const status = this.getAttribute('data-status');
+                Swal.fire({
+                    title: `Set status to ${status}?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#4facfe',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, update'
+                }).then((result) => {
+                    if (result.isConfirmed) this.submit();
+                });
             });
         });
     </script>

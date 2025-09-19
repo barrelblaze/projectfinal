@@ -32,6 +32,7 @@ class Report(db.Model):
     date = db.Column(db.String(50))
     image = db.Column(db.String(200))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    status = db.Column(db.String(50), default='Pending')
 
 class Organization(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -360,10 +361,35 @@ def org_home():
     user_map = {u.id: u for u in users}
     return render_template('org_home.html', all_reports=all_reports, user_map=user_map)
 
+@app.route('/org/report/<int:report_id>/status', methods=['POST'])
+def org_update_report_status(report_id):
+    if 'org_id' not in session:
+        return redirect(url_for('login'))
+    new_status = request.form.get('status')
+    if new_status not in ['Pending', 'Acknowledged', 'Solved']:
+        flash('Invalid status update.', 'danger')
+        return redirect(url_for('org_home'))
+    report = Report.query.get_or_404(report_id)
+    report.status = new_status
+    db.session.commit()
+    flash(f'Report status updated to {new_status}.', 'org_status')
+    return redirect(url_for('org_home'))
+
 # ===================== DB INIT =====================
 
 with app.app_context():
     db.create_all()
+    # Lightweight SQLite migration: ensure 'status' column exists on 'report'
+    try:
+        from sqlalchemy import text
+        result = db.session.execute(text("PRAGMA table_info(report)"))
+        columns = [row[1] for row in result]
+        if 'status' not in columns:
+            db.session.execute(text("ALTER TABLE report ADD COLUMN status VARCHAR(50) DEFAULT 'Pending'"))
+            db.session.commit()
+    except Exception:
+        # Avoid breaking app if migration check fails
+        pass
 
 if __name__ == '__main__':
     app.run(debug=True)
