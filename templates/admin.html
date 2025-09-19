@@ -545,7 +545,16 @@
                                             {% if upd_org %}
                                             <div class="mt-2">
                                                 <div class="text-secondary small">by</div>
-                                                <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded border bg-light mt-1">
+                                                <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded border bg-light mt-1 org-preview-link" style="cursor: pointer;" 
+                                                      data-org-id="{{ upd_org.id }}"
+                                                      data-org-name="{{ upd_org.org_name }}"
+                                                      data-org-username="{{ upd_org.username }}"
+                                                      data-org-place="{{ upd_org.place }}"
+                                                      data-org-contact="{{ upd_org.contact }}"
+                                                      data-org-pincode="{{ upd_org.pincode }}"
+                                                      data-org-address="{{ upd_org.address }}"
+                                                      data-org-proof-status="{{ upd_org.proof_status }}"
+                                                      data-org-profile-pic="{{ url_for('static', filename='uploads/' ~ upd_org.profile_pic) if upd_org.profile_pic else '' }}">
                                                     {% if upd_org.profile_pic %}
                                                         <img src="{{ url_for('static', filename='uploads/' ~ upd_org.profile_pic) }}" alt="Org" class="rounded-circle border" style="width:28px; height:28px; object-fit:cover;">
                                                     {% else %}
@@ -600,6 +609,64 @@
         <div class="modal-content bg-transparent border-0">
           <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
             <img id="profileModalImage" src="" alt="Profile Preview" class="rounded-circle border border-4 border-white shadow" style="width: 220px; height: 220px; object-fit: cover; background: #e9ecef;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for organization profile preview -->
+    <div class="modal fade" id="orgProfileModal" tabindex="-1" aria-labelledby="orgProfileModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius: 20px;">
+          <div class="modal-header" style="border-bottom: none; padding-bottom: 0;">
+            <h5 class="modal-title" id="orgProfileModalLabel" style="color: #4facfe; font-weight: 600;">Organization Profile</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-4">
+              <div class="text-center text-md-start position-relative">
+                <img id="orgModalProfilePic" src="" alt="Org Avatar" class="rounded-circle border border-3 border-white shadow" style="width: 120px; height: 120px; object-fit: cover; background: #e9ecef;">
+                <span class="position-absolute translate-middle" style="bottom: 4px; left: 100px;">
+                  <span id="orgModalStatus" class="bg-success text-white d-inline-flex align-items-center justify-content-center rounded-circle shadow" style="width: 24px; height: 24px; border:2px solid #fff;">
+                    <i class="bi bi-check2" style="font-size:12px;"></i>
+                  </span>
+                </span>
+              </div>
+              <div class="flex-grow-1 w-100">
+                <h3 id="orgModalName" class="fw-bold mb-1 text-dark" style="letter-spacing:1px; font-size:1.4rem;"></h3>
+                <p id="orgModalUsername" class="text-secondary mb-2" style="font-size:1rem;"></p>
+                <div class="mb-3">
+                  <span id="orgModalPlace" class="badge bg-info bg-gradient px-2 py-1 text-white shadow-sm" style="font-size:0.9rem;"></span>
+                </div>
+
+                <div class="row g-2">
+                  <div class="col-md-6">
+                    <div class="p-2 rounded border bg-light h-100">
+                      <div class="small text-muted mb-1">Contact</div>
+                      <div id="orgModalContact" class="fw-semibold" style="font-size:0.9rem;"></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="p-2 rounded border bg-light h-100">
+                      <div class="small text-muted mb-1">Pincode</div>
+                      <div id="orgModalPincode" class="fw-semibold" style="font-size:0.9rem;"></div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="p-2 rounded border bg-light">
+                      <div class="small text-muted mb-1">Address</div>
+                      <div id="orgModalAddress" class="fw-semibold" style="font-size:0.9rem;"></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="p-2 rounded border bg-light h-100">
+                      <div class="small text-muted mb-1">Proof Status</div>
+                      <div id="orgModalProofStatus"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -667,6 +734,65 @@
                 const img = link.querySelector('img');
                 document.getElementById('profileModalImage').src = img.src;
                 new bootstrap.Modal(document.getElementById('profileImageModal')).show();
+            });
+        });
+
+        // Organization preview modal functionality
+        document.querySelectorAll('.org-preview-link').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Get organization data from data attributes
+                const orgData = {
+                    id: this.getAttribute('data-org-id'),
+                    name: this.getAttribute('data-org-name'),
+                    username: this.getAttribute('data-org-username'),
+                    place: this.getAttribute('data-org-place'),
+                    contact: this.getAttribute('data-org-contact'),
+                    pincode: this.getAttribute('data-org-pincode'),
+                    address: this.getAttribute('data-org-address'),
+                    proofStatus: this.getAttribute('data-org-proof-status'),
+                    profilePic: this.getAttribute('data-org-profile-pic')
+                };
+
+                // Set profile picture
+                const profilePicElement = document.getElementById('orgModalProfilePic');
+                if (orgData.profilePic) {
+                    profilePicElement.src = orgData.profilePic;
+                } else {
+                    profilePicElement.src = `https://avatars.dicebear.com/api/initials/${orgData.name || 'Org'}.svg`;
+                }
+
+                // Set organization name and username
+                document.getElementById('orgModalName').textContent = orgData.name || 'Organization';
+                document.getElementById('orgModalUsername').textContent = '@' + orgData.username;
+                document.getElementById('orgModalPlace').textContent = orgData.place || 'No place set';
+
+                // Set contact and address information
+                document.getElementById('orgModalContact').textContent = orgData.contact || 'N/A';
+                document.getElementById('orgModalPincode').textContent = orgData.pincode || 'N/A';
+                document.getElementById('orgModalAddress').textContent = orgData.address || 'N/A';
+
+                // Set proof status badge
+                const statusElement = document.getElementById('orgModalStatus');
+                const proofStatusElement = document.getElementById('orgModalProofStatus');
+                
+                if (orgData.proofStatus === 'Approved') {
+                    statusElement.className = 'bg-success text-white d-inline-flex align-items-center justify-content-center rounded-circle shadow';
+                    statusElement.innerHTML = '<i class="bi bi-check2" style="font-size:12px;"></i>';
+                    proofStatusElement.innerHTML = '<span class="badge bg-success" style="font-size:0.8rem;">Approved</span>';
+                } else if (orgData.proofStatus === 'Rejected') {
+                    statusElement.className = 'bg-danger text-white d-inline-flex align-items-center justify-content-center rounded-circle shadow';
+                    statusElement.innerHTML = '<i class="bi bi-x" style="font-size:12px;"></i>';
+                    proofStatusElement.innerHTML = '<span class="badge bg-danger" style="font-size:0.8rem;">Rejected</span>';
+                } else {
+                    statusElement.className = 'bg-warning text-dark d-inline-flex align-items-center justify-content-center rounded-circle shadow';
+                    statusElement.innerHTML = '<i class="bi bi-clock" style="font-size:12px;"></i>';
+                    proofStatusElement.innerHTML = '<span class="badge bg-warning text-dark" style="font-size:0.8rem;">Pending</span>';
+                }
+
+                // Show the modal
+                new bootstrap.Modal(document.getElementById('orgProfileModal')).show();
             });
         });
 
