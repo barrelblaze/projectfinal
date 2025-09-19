@@ -355,7 +355,10 @@ def admin_verify_org(org_id):
 def org_home():
     if 'org_id' not in session:
         return redirect(url_for('login'))
-    return render_template('org_home.html')
+    all_reports = Report.query.order_by(Report.id.desc()).all()
+    users = User.query.all()
+    user_map = {u.id: u for u in users}
+    return render_template('org_home.html', all_reports=all_reports, user_map=user_map)
 
 # ===================== DB INIT =====================
 
