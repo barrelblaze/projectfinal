@@ -25,6 +25,7 @@
         <div class="container-fluid">
             <span class="navbar-brand fw-bold text-white" style="font-size:1.5rem; letter-spacing:1px; text-shadow:0 2px 8px rgba(0,0,0,0.12);">Organization</span>
             <div class="d-flex align-items-center gap-2">
+                <a href="{{ url_for('org_profile') }}" class="btn btn-outline-info fw-semibold shadow-sm" style="border-radius:8px;">Profile</a>
                 <a href="{{ url_for('logout') }}" class="btn btn-outline-light fw-semibold shadow-sm" style="border-radius:8px;">Logout</a>
             </div>
         </div>
@@ -55,6 +56,17 @@
                             <ul class="dropdown-menu w-100" aria-labelledby="dateDropdown">
                                 <li><a class="dropdown-item" href="#" onclick="sortByDate('new')">New</a></li>
                                 <li><a class="dropdown-item" href="#" onclick="sortByDate('old')">Old</a></li>
+                            </ul>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-custom dropdown-toggle w-100" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-flag"></i> Filter by Status
+                            </button>
+                            <ul class="dropdown-menu w-100" aria-labelledby="statusDropdown">
+                                <li><a class="dropdown-item" href="#" onclick="filterByStatus('all')">All</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterByStatus('pending')">Pending</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterByStatus('acknowledged')">Acknowledged</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterByStatus('solved')">Solved</a></li>
                             </ul>
                         </div>
                         <button class="btn btn-custom" onclick="resetSort()"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
@@ -185,6 +197,15 @@
                 return order === 'new' ? dB - dA : dA - dB;
             });
             visibleCards.forEach(card => container.appendChild(card));
+        }
+        function filterByStatus(status) {
+            let allCards = document.querySelectorAll('#allReports .report-card');
+            if (status === 'all') { allCards.forEach(card => card.style.display = ''); return; }
+            allCards.forEach(card => {
+                let badge = card.querySelector('.status-box .badge');
+                let value = badge ? badge.textContent.trim().toLowerCase() : '';
+                card.style.display = (value === status.toLowerCase()) ? '' : 'none';
+            });
         }
         // Image preview modal
         const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));

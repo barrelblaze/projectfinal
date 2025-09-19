@@ -45,6 +45,7 @@ class Organization(db.Model):
     pincode = db.Column(db.String(20))
     proof_file = db.Column(db.String(200))  # filename of uploaded proof
     proof_status = db.Column(db.String(50), default='Pending')  # Pending, Approved, Rejected
+    profile_pic = db.Column(db.String(200))  # filename of uploaded organization profile picture
 
 # ===================== ROUTES =====================
 
@@ -361,6 +362,40 @@ def org_home():
     user_map = {u.id: u for u in users}
     return render_template('org_home.html', all_reports=all_reports, user_map=user_map)
 
+@app.route('/org_profile')
+def org_profile():
+    if 'org_id' not in session:
+        return redirect(url_for('login'))
+    org = Organization.query.get(session['org_id'])
+    return render_template(
+        'org_profile.html',
+        org_name=org.org_name,
+        username=org.username,
+        place=org.place,
+        contact=org.contact,
+        address=org.address,
+        pincode=org.pincode,
+        proof_file=org.proof_file,
+        proof_status=org.proof_status,
+        profile_pic=org.profile_pic
+    )
+
+@app.route('/org_update_profile_pic', methods=['POST'])
+def org_update_profile_pic():
+    if 'org_id' not in session:
+        return redirect(url_for('login'))
+    org = Organization.query.get(session['org_id'])
+    file = request.files.get('profile_pic')
+    if file and file.filename != '':
+        filename = datetime.now().strftime("%Y%m%d%H%M%S_") + file.filename
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        org.profile_pic = filename
+        db.session.commit()
+        flash('Profile picture updated!', 'success')
+    else:
+        flash('No image selected.', 'warning')
+    return redirect(url_for('org_profile'))
+
 @app.route('/org/report/<int:report_id>/status', methods=['POST'])
 def org_update_report_status(report_id):
     if 'org_id' not in session:
@@ -389,6 +424,16 @@ with app.app_context():
             db.session.commit()
     except Exception:
         # Avoid breaking app if migration check fails
+        pass
+    # Ensure 'profile_pic' column exists on 'organization'
+    try:
+        from sqlalchemy import text
+        result = db.session.execute(text("PRAGMA table_info(organization)"))
+        columns = [row[1] for row in result]
+        if 'profile_pic' not in columns:
+            db.session.execute(text("ALTER TABLE organization ADD COLUMN profile_pic VARCHAR(200)"))
+            db.session.commit()
+    except Exception:
         pass
 
 if __name__ == '__main__':
