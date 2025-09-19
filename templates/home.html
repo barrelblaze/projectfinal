@@ -262,8 +262,8 @@
                                         {% set upd_org = org_map.get(report.updated_by_org_id) %}
                                         {% if upd_org %}
                                         <div class="mt-2">
-                                            <span class="text-secondary small me-2">by</span>
-                                            <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded border bg-light">
+                                            <div class="text-secondary small">by</div>
+                                            <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded border bg-light mt-1">
                                                 {% if upd_org.profile_pic %}
                                                     <img src="{{ url_for('static', filename='uploads/' ~ upd_org.profile_pic) }}" alt="Org" class="rounded-circle border" style="width:28px; height:28px; object-fit:cover;">
                                                 {% else %}
@@ -322,8 +322,8 @@
                                         {% set upd_org = org_map.get(report.updated_by_org_id) %}
                                         {% if upd_org %}
                                         <div class="mt-2">
-                                            <span class="text-secondary small me-2">by</span>
-                                            <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded border bg-light">
+                                            <div class="text-secondary small">by</div>
+                                            <span class="d-inline-flex align-items-center gap-2 px-2 py-1 rounded border bg-light mt-1">
                                                 {% if upd_org.profile_pic %}
                                                     <img src="{{ url_for('static', filename='uploads/' ~ upd_org.profile_pic) }}" alt="Org" class="rounded-circle border" style="width:28px; height:28px; object-fit:cover;">
                                                 {% else %}
@@ -359,7 +359,7 @@
         </div>
         <!-- Profile Card Right Side -->
         {% if logged_in %}
-        <div class="col-md-3 d-none d-md-block" style="margin-left:-40px;">
+        <div class="col-md-3 d-none d-md-block" style="margin-left:-15px;">
             <div class="profile-card mx-auto text-center shadow-lg" style="max-width: 420px; background: #fff; border-radius: 20px; padding: 36px 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); margin-top: 100px;">
                 <div class="mb-4 position-relative">
                     {% if profile_pic %}
