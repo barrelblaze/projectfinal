@@ -248,7 +248,7 @@
                                             <img src="https://via.placeholder.com/400x250/000000/FFFFFF?text=No+Image" class="img-preview" alt="No Image" style="margin-left:70px; width:250px; height:180px; object-fit:cover; object-position:center; border-radius:8px; display:block;">
                                         </a>
                                     {% endif %}
-                                    <div class="status-box ms-3 mt-4" style="min-width:120px;">
+                                    <div class="status-box ms-3 mt-4" style="min-width:160px;">
                                         <div class="fw-semibold text-secondary mb-1" style="font-size:1rem;">Status</div>
                                         {% set current_status = report.status if report.status else 'Pending' %}
                                         {% if current_status == 'Acknowledged' %}
@@ -257,6 +257,19 @@
                                             <span class="badge bg-success px-3 py-2" style="font-size:1rem;">Solved</span>
                                         {% else %}
                                             <span class="badge bg-warning text-dark px-3 py-2" style="font-size:1rem;">Pending</span>
+                                        {% endif %}
+                                        {% if report.updated_by_org_id and org_map %}
+                                        {% set upd_org = org_map.get(report.updated_by_org_id) %}
+                                        {% if upd_org %}
+                                        <div class="d-flex align-items-center gap-2 mt-2">
+                                            {% if upd_org.profile_pic %}
+                                                <img src="{{ url_for('static', filename='uploads/' ~ upd_org.profile_pic) }}" alt="Org" class="rounded-circle border" style="width:22px; height:22px; object-fit:cover;">
+                                            {% else %}
+                                                <img src="https://avatars.dicebear.com/api/initials/{{ upd_org.username }}.svg" alt="Org" class="rounded-circle border" style="width:22px; height:22px;">
+                                            {% endif %}
+                                            <span class="small text-muted">Updated by {{ upd_org.username }}</span>
+                                        </div>
+                                        {% endif %}
                                         {% endif %}
                                     </div>
                                 </div>
@@ -292,7 +305,7 @@
                                             <img src="https://via.placeholder.com/400x250/000000/FFFFFF?text=No+Image" class="img-preview" alt="No Image" style="width:250px; height:180px; object-fit:cover; object-position:center; border-radius:8px; display:block;">
                                         </a>
                                     {% endif %}
-                                    <div class="status-box ms-3 mt-4" style="min-width:120px;">
+                                    <div class="status-box ms-3 mt-4" style="min-width:160px;">
                                         <div class="fw-semibold text-secondary mb-1" style="font-size:1rem;">Status</div>
                                         {% set current_status = report.status if report.status else 'Pending' %}
                                         {% if current_status == 'Acknowledged' %}
@@ -301,6 +314,19 @@
                                             <span class="badge bg-success px-3 py-2" style="font-size:1rem;">Solved</span>
                                         {% else %}
                                             <span class="badge bg-warning text-dark px-3 py-2" style="font-size:1rem;">Pending</span>
+                                        {% endif %}
+                                        {% if report.updated_by_org_id and org_map %}
+                                        {% set upd_org = org_map.get(report.updated_by_org_id) %}
+                                        {% if upd_org %}
+                                        <div class="d-flex align-items-center gap-2 mt-2">
+                                            {% if upd_org.profile_pic %}
+                                                <img src="{{ url_for('static', filename='uploads/' ~ upd_org.profile_pic) }}" alt="Org" class="rounded-circle border" style="width:22px; height:22px; object-fit:cover;">
+                                            {% else %}
+                                                <img src="https://avatars.dicebear.com/api/initials/{{ upd_org.username }}.svg" alt="Org" class="rounded-circle border" style="width:22px; height:22px;">
+                                            {% endif %}
+                                            <span class="small text-muted">Updated by {{ upd_org.username }}</span>
+                                        </div>
+                                        {% endif %}
                                         {% endif %}
                                     </div>
                                 </div>

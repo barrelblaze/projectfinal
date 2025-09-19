@@ -33,6 +33,7 @@ class Report(db.Model):
     image = db.Column(db.String(200))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     status = db.Column(db.String(50), default='Pending')
+    updated_by_org_id = db.Column(db.Integer, db.ForeignKey('organization.id'))
 
 class Organization(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -57,6 +58,8 @@ def index():
         user = User.query.get(session['user_id'])
         users = User.query.all()
         user_map = {u.id: u for u in users}
+        orgs = Organization.query.all()
+        org_map = {o.id: o for o in orgs}
         return render_template(
             'home.html',
             all_reports=all_reports,
@@ -67,7 +70,8 @@ def index():
             contact=user.contact or '',
             place=user.place or '',
             profile_pic=user.profile_pic,
-            user_map=user_map
+            user_map=user_map,
+            org_map=org_map
         )
     return redirect(url_for('login'))
 
@@ -406,6 +410,7 @@ def org_update_report_status(report_id):
         return redirect(url_for('org_home'))
     report = Report.query.get_or_404(report_id)
     report.status = new_status
+    report.updated_by_org_id = session['org_id']
     db.session.commit()
     flash(f'Report status updated to {new_status}.', 'org_status')
     return redirect(url_for('org_home'))
@@ -432,6 +437,16 @@ with app.app_context():
         columns = [row[1] for row in result]
         if 'profile_pic' not in columns:
             db.session.execute(text("ALTER TABLE organization ADD COLUMN profile_pic VARCHAR(200)"))
+            db.session.commit()
+    except Exception:
+        pass
+    # Ensure 'updated_by_org_id' column exists on 'report'
+    try:
+        from sqlalchemy import text
+        result = db.session.execute(text("PRAGMA table_info(report)"))
+        columns = [row[1] for row in result]
+        if 'updated_by_org_id' not in columns:
+            db.session.execute(text("ALTER TABLE report ADD COLUMN updated_by_org_id INTEGER"))
             db.session.commit()
     except Exception:
         pass
